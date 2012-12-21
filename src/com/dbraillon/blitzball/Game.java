@@ -40,25 +40,25 @@ public class Game extends BasicGame {
 		players = new Vector<Player>();
 		playerController = new PlayerController(stadium);
 		
-		for(int i = 0; i < 1000; i++) {
-			
-			Player p = new Player(stadium.get_radius() / 2, stadium.get_radius() / 2, 10);
-			players.add(p);
-		}
+		players.add(new Player(200, 300, 4));
+		players.add(new Player(300, 200, 5));
+		
 	}
 	
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		
-		for(Player player : players) {
+		Player p1 = players.elementAt(0);
+		Player p2 = players.elementAt(1);
+		
+		playerController.goFollowPlayer(p1, p2);
+		
+		if(!playerController.goForwardControl(p2)) {
 			
-			if(!playerController.goForwardControl(player)) {
-				
-				Random r = new Random();
-				int direction = r.nextInt(360);
-				
-				player.changeDirection(direction);
-			}
+			Random r = new Random();
+			int direction = r.nextInt(360);
+			
+			p2.changeDirection(direction);
 		}
 	}
 
