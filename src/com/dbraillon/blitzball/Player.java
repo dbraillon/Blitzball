@@ -4,6 +4,8 @@ public class Player {
 
 	private double _xPosition;
 	private double _yPosition;
+	
+	// diamètre du joueur en comptant les bords
 	private int _radius;
 	
 	private double _directionDegrees;
@@ -12,7 +14,7 @@ public class Player {
 	
 	public Player(int xPosition, int yPosition) {
 		
-		set_radius(10);
+		set_radius(2);
 		
 		set_xPosition(xPosition);
 		set_yPosition(yPosition);

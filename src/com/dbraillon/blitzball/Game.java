@@ -22,33 +22,44 @@ public class Game extends BasicGame {
 	@Override
 	public void render(GameContainer arg0, Graphics graphics) throws SlickException {
 		
-		graphics.drawOval(0, 0, stadium.get_radius()*2, stadium.get_radius()*2);
+		graphics.drawOval(0, 0, stadium.get_totalRadius(), stadium.get_totalRadius());
 		
 		for(Player player : players) {
 			
-			graphics.drawOval((float) player.get_xPosition() - player.get_radius(), (float) player.get_yPosition() - player.get_radius(),
-					player.get_radius(), player.get_radius());
-			
 			double v = 1;
-			double sr = stadium.get_radius();
+			double sr = stadium.get_radius() / 2;
 			
-			double xc = player.get_xPosition() + player.get_radius();
-			double yc = player.get_yPosition() + player.get_radius();
+			// positition actuelle
+			double xc = player.get_xPosition();
+			double yc = player.get_yPosition();
 			double dc = Math.sqrt(Math.pow(xc - sr,  2) + Math.pow(yc - sr, 2));
-
+			
+			// position future
 			double xf = xc + player.xMove * v;
 			double yf = yc + player.yMove * v;
-			double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2)) + player.get_radius();
+			double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2));
 			
-			graphics.drawString("Centre du stade [" + stadium.get_radius() + ", " + stadium.get_radius() + "]", 10, 30);
+			/*graphics.drawString("Centre du stade [" + stadium.get_radius() + ", " + stadium.get_radius() + "]", 10, 30);
 			graphics.drawString("Centre du joueur [" + xc + ", " + yc + "]", 10, 50);
-			graphics.drawString("Distance du centre " + dc, 10, 70);
+			graphics.drawString("Future centre du joueur [" + xf + ", " + yf + "]", 10, 70);
+			graphics.drawString("Distance du centre " + dc, 10, 90);
+			graphics.drawString("Future distance du centre " + df, 10, 110);*/
 			
 			v = (df >= sr) ? sr - dc : v;
 			
-			graphics.drawString("Velocité " + v, 10, 90);
+			if(v < 1)
+			{
+				Random r = new Random();
+				
+				player.changeDirection(r.nextInt(360));
+			}
+			
+			//graphics.drawString("Velocité " + v, 10, 130);
 			
 			player.goForward(v);
+			
+			graphics.drawOval((float) player.get_xPosition() - player.get_radius() / 2, (float) player.get_yPosition() - player.get_radius() / 2,
+					player.get_radius(), player.get_radius());
 		}
 		
 		
@@ -61,9 +72,9 @@ public class Game extends BasicGame {
 		players = new Vector<Player>();
 		playerController = new PlayerController(stadium);
 		
-		for(int i = 0; i < 1; i++) {
+		for(int i = 0; i < 1000; i++) {
 			
-			Player p = new Player(stadium.get_radius(), stadium.get_radius());
+			Player p = new Player(stadium.get_radius() / 2, stadium.get_radius() / 2);
 			players.add(p);
 		}
 	}
@@ -91,7 +102,7 @@ double _f;
 		
 		AppGameContainer app = new AppGameContainer(new Game("Blitzball"));
 		app.setDisplayMode(800, 600, false);
-		app.setTargetFrameRate(20);
+		app.setTargetFrameRate(30);
 		app.start();
 	}
 }
