@@ -9,15 +9,19 @@ public class Player {
 	private int _radius;
 	
 	private double _directionDegrees;
+	
 	public double xMove;
 	public double yMove;
+	public double velocity;
 	
-	public Player(int xPosition, int yPosition) {
+	public Player(int xPosition, int yPosition, double velocity) {
 		
 		set_radius(2);
 		
 		set_xPosition(xPosition);
 		set_yPosition(yPosition);
+		
+		this.velocity = velocity;
 		
 		changeDirection(0);
 	}
