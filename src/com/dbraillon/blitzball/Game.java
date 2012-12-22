@@ -12,7 +12,7 @@ import org.newdawn.slick.SlickException;
 public class Game extends BasicGame {
 
 	private Stadium stadium;
-	private Vector<Player> players;
+	private Vector<Player> followerPlayers, followedPlayers;
 	private PlayerController playerController;
 	
 	public Game(String title) {
@@ -24,10 +24,13 @@ public class Game extends BasicGame {
 		
 		graphics.drawOval(0, 0, stadium.get_totalRadius(), stadium.get_totalRadius());
 		
-		for(Player player : players) {
+		for(int i = 0; i < 500; i++) {
 			
-			graphics.drawOval((float) player.get_xPosition() - player.get_radius() / 2, (float) player.get_yPosition() - player.get_radius() / 2,
-					player.get_radius(), player.get_radius());
+			graphics.drawOval((float) followerPlayers.elementAt(i).get_xPosition() - followerPlayers.elementAt(i).get_radius() / 2, (float) followerPlayers.elementAt(i).get_yPosition() - followerPlayers.elementAt(i).get_radius() / 2,
+					followerPlayers.elementAt(i).get_radius(), followerPlayers.elementAt(i).get_radius());
+			
+			graphics.drawOval((float) followedPlayers.elementAt(i).get_xPosition() - followedPlayers.elementAt(i).get_radius() / 2, (float) followedPlayers.elementAt(i).get_yPosition() - followedPlayers.elementAt(i).get_radius() / 2,
+					followedPlayers.elementAt(i).get_radius() * 2, followedPlayers.elementAt(i).get_radius() * 2);
 		}
 		
 		
@@ -37,29 +40,36 @@ public class Game extends BasicGame {
 	public void init(GameContainer arg0) throws SlickException {
 		
 		stadium = new Stadium();
-		players = new Vector<Player>();
+		followerPlayers = new Vector<Player>();
+		followedPlayers = new Vector<Player>();
 		playerController = new PlayerController(stadium);
 		
-		players.add(new Player(200, 300, 4));
-		players.add(new Player(300, 200, 5));
-		
+		for(int i = 0; i < 500; i++)
+		{
+			followerPlayers.add(new Player(200, 300, 4));
+			followedPlayers.add(new Player(300, 200, 5));
+		}
 	}
 	
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		
-		Player p1 = players.elementAt(0);
-		Player p2 = players.elementAt(1);
 		
-		playerController.goFollowPlayer(p1, p2);
-		
-		if(!playerController.goForwardControl(p2)) {
+		for(int i = 0; i < 500; i++)
+		{
+			Player p1 = followerPlayers.elementAt(i);
+			Player p2 = followedPlayers.elementAt(i);
 			
-			Random r = new Random();
-			int direction = r.nextInt(360);
+			playerController.goFollowPlayer(p1, p2);
 			
-			p2.changeDirection(direction);
-		}
+			if(!playerController.goForwardControl(p2)) {
+				
+				Random r = new Random();
+				int direction = r.nextInt(360);
+				
+				p2.changeDirection(direction);
+			}
+		}	
 	}
 
 	public static void main(String[] args) throws SlickException {

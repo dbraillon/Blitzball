@@ -62,40 +62,46 @@ public class PlayerController {
 		
 		if(rx > dx && ry > dy)
 		{
-			angle = 180 - angle;//OK
+			/// A en bas à droite de B (en haut à droite en vrai)
+			angle = 180 - angle;
 		}
-		if(rx < dx && ry > dy)
+		else if(rx < dx && ry > dy)
 		{
-			//angle = angle;
+			/// A en bas à gauche de B (en haut à gauche en vrai)
 		}
-		if(rx > dx && ry < dy)
+		else if(rx > dx && ry < dy)
 		{
+			// A en haut à droite de B (en bas à droite en vrai)
 			angle = 180 + angle;
 		}
-		if(rx < dx && ry < dy)
+		else if(rx < dx && ry < dy)
 		{
-			angle = 270 + angle;
+			// A en haut à gauche de B (en bas à gauche en vrai)
+			angle = 360 - angle;
 		}
-		
-		if(rx == dx && ry > dy)
+		else if(rx == dx && ry > dy)
 		{
+			// A en bas de B (en haut en vrai)
 			angle = 90;
 		}
-		if(rx == dx && ry < dy)
+		else if(rx == dx && ry < dy)
 		{
+			// A en haut de B (en bas en vrai)
 			angle = 270;
 		}
-		if(rx == dx && ry == dy)
+		else if(rx == dx && ry == dy)
 		{
+			// A sur B
 			rv = 0;
 		}
-		
-		if(rx < dx && ry == dy)
+		else if(rx < dx && ry == dy)
 		{
+			// A à gauche de B
 			angle = 0;
 		}
-		if(rx > dx && ry == dy)
+		else if(rx > dx && ry == dy)
 		{
+			// A à droite de B
 			angle = 180;
 		}
 		
