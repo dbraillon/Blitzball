@@ -12,18 +12,34 @@ public class Player {
 	
 	public double xMove;
 	public double yMove;
-	public double velocity;
 	
-	public Player(int xPosition, int yPosition, double velocity) {
+	public int hp; // health point
+	public int sp; // speed
+	public int en; // endurance
+	public int at; // attack
+	public int pa; // passe
+	public int bl; // block
+	public int sh; // shoot
+	public int ca; // catch
+	
+	
+	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca) {
 		
-		set_radius(2);
+		set_radius(5);
 		
-		set_xPosition(xPosition);
-		set_yPosition(yPosition);
+		set_xPosition(0);
+		set_yPosition(0);
 		
-		this.velocity = velocity;
+		changeDirection(180);
 		
-		changeDirection(0);
+		this.hp = hp;
+		this.sp = sp;
+		this.en = en;
+		this.at = at;
+		this.pa = pa;
+		this.bl = bl;
+		this.sh = sh;
+		this.ca = ca;
 	}
 	
 	public void changeDirection(double directionDegrees) {
@@ -31,14 +47,12 @@ public class Player {
 		_directionDegrees = directionDegrees;
 		xMove = Math.cos(Math.toRadians(_directionDegrees));
 		yMove = 0 - Math.sin(Math.toRadians(_directionDegrees));
-		
-		System.out.println("Changing direction to " + directionDegrees);
 	}
 	
 	public void goForward(double velocity) {
 		
-		_xPosition += velocity * xMove;
-		_yPosition += velocity * yMove;
+		set_xPosition(get_xPosition() + velocity * xMove);
+		set_yPosition(get_yPosition() + velocity * yMove);
 	}
 
 	public double get_xPosition() {
@@ -48,13 +62,19 @@ public class Player {
 	public void set_xPosition(double _xPosition) {
 		this._xPosition = _xPosition;
 	}
-	
+
 	public double get_yPosition() {
 		return _yPosition;
 	}
-	
+
 	public void set_yPosition(double _yPosition) {
 		this._yPosition = _yPosition;
+	}
+	
+	public void set_position(double xPosition, double yPosition) {
+		
+		_xPosition = xPosition;
+		_yPosition = yPosition;
 	}
 
 	public int get_radius() {
@@ -63,13 +83,5 @@ public class Player {
 
 	public void set_radius(int _radius) {
 		this._radius = _radius;
-	}
-
-	public double get_directionDegrees() {
-		return _directionDegrees;
-	}
-
-	public void set_directionDegrees(double _directionDegrees) {
-		this._directionDegrees = _directionDegrees;
 	}
 }

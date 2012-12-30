@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -12,8 +13,10 @@ import org.newdawn.slick.SlickException;
 public class Game extends BasicGame {
 
 	private Stadium stadium;
-	private Vector<Player> followerPlayers, followedPlayers;
+	private Team redTeam, blueTeam;
+	
 	private PlayerController playerController;
+	
 	
 	public Game(String title) {
 		super(title);
@@ -22,15 +25,20 @@ public class Game extends BasicGame {
 	@Override
 	public void render(GameContainer arg0, Graphics graphics) throws SlickException {
 		
+		graphics.setBackground(new Color(255, 255, 255));
+		
+		graphics.setColor(new Color(0, 0, 0));
 		graphics.drawOval(0, 0, stadium.get_totalRadius(), stadium.get_totalRadius());
 		
-		for(int i = 0; i < 500; i++) {
+		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
-			graphics.drawOval((float) followerPlayers.elementAt(i).get_xPosition() - followerPlayers.elementAt(i).get_radius() / 2, (float) followerPlayers.elementAt(i).get_yPosition() - followerPlayers.elementAt(i).get_radius() / 2,
-					followerPlayers.elementAt(i).get_radius(), followerPlayers.elementAt(i).get_radius());
+			graphics.setColor(new Color(255, 0, 0));
+			graphics.fillOval((float) redTeam.getPlayer(i).get_xPosition() - redTeam.getPlayer(i).get_radius() / 2, (float) redTeam.getPlayer(i).get_yPosition() - redTeam.getPlayer(i).get_radius() / 2,
+					redTeam.getPlayer(i).get_radius(), redTeam.getPlayer(i).get_radius());
 			
-			graphics.drawOval((float) followedPlayers.elementAt(i).get_xPosition() - followedPlayers.elementAt(i).get_radius() / 2, (float) followedPlayers.elementAt(i).get_yPosition() - followedPlayers.elementAt(i).get_radius() / 2,
-					followedPlayers.elementAt(i).get_radius() * 2, followedPlayers.elementAt(i).get_radius() * 2);
+			graphics.setColor(new Color(0, 0, 255));
+			graphics.fillOval((float) blueTeam.getPlayer(i).get_xPosition() - blueTeam.getPlayer(i).get_radius() / 2, (float) blueTeam.getPlayer(i).get_yPosition() - blueTeam.getPlayer(i).get_radius() / 2,
+					blueTeam.getPlayer(i).get_radius(), blueTeam.getPlayer(i).get_radius());
 		}
 		
 		
@@ -40,34 +48,32 @@ public class Game extends BasicGame {
 	public void init(GameContainer arg0) throws SlickException {
 		
 		stadium = new Stadium();
-		followerPlayers = new Vector<Player>();
-		followedPlayers = new Vector<Player>();
-		playerController = new PlayerController(stadium);
 		
-		for(int i = 0; i < 500; i++)
-		{
-			followerPlayers.add(new Player(200, 300, 4));
-			followedPlayers.add(new Player(300, 200, 5));
-		}
+		redTeam = new Team();
+		redTeam.makeRedTeam();
+		
+		blueTeam = new Team();
+		blueTeam.makeBlueTeam();
+		
+		playerController = new PlayerController(stadium);
 	}
 	
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		
-		
-		for(int i = 0; i < 500; i++)
+		for(int i = 0; i < Team.PLAYER_COUNT; i++)
 		{
-			Player p1 = followerPlayers.elementAt(i);
-			Player p2 = followedPlayers.elementAt(i);
+			Player redPlayer = redTeam.getPlayer(i);
+			Player bluePlayer = blueTeam.getPlayer(i);
 			
-			playerController.goFollowPlayer(p1, p2);
+			playerController.goFollowPlayer(redPlayer, bluePlayer);
 			
-			if(!playerController.goForwardControl(p2)) {
+			if(!playerController.goForwardControl(bluePlayer)) {
 				
 				Random r = new Random();
 				int direction = r.nextInt(360);
 				
-				p2.changeDirection(direction);
+				bluePlayer.changeDirection(direction);
 			}
 		}	
 	}

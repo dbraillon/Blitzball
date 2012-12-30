@@ -1,7 +1,5 @@
 package com.dbraillon.blitzball;
 
-import java.util.Random;
-
 public class PlayerController {
 
 	private Stadium _stadium;
@@ -15,7 +13,7 @@ public class PlayerController {
 		
 		boolean b = true;
 		
-		double v = player.velocity;
+		double v = player.sp / 10;
 		double sr = _stadium.get_radius() / 2;
 		
 		// positition actuelle
@@ -42,8 +40,8 @@ public class PlayerController {
 	
 	public void goFollowPlayer(Player follower, Player followed)
 	{
-		double rv = follower.velocity;
-		double dv = followed.velocity;
+		double rv = follower.sp / 10;
+		double dv = followed.sp / 10;
 		
 		double rx = follower.get_xPosition();
 		double ry = follower.get_yPosition();
