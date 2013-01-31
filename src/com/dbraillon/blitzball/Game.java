@@ -16,7 +16,7 @@ public class Game extends BasicGame {
 	private Team redTeam, blueTeam;
 	
 	private PlayerController playerController;
-	
+	private Player playerBall;
 	
 	public Game(String title) {
 		super(title);
@@ -32,13 +32,37 @@ public class Game extends BasicGame {
 		
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
-			graphics.setColor(new Color(255, 0, 0));
-			graphics.fillOval((float) redTeam.getPlayer(i).get_xPosition() - redTeam.getPlayer(i).get_radius() / 2, (float) redTeam.getPlayer(i).get_yPosition() - redTeam.getPlayer(i).get_radius() / 2,
-					redTeam.getPlayer(i).get_radius(), redTeam.getPlayer(i).get_radius());
+			Player p = redTeam.getPlayer(i);
 			
-			graphics.setColor(new Color(0, 0, 255));
-			graphics.fillOval((float) blueTeam.getPlayer(i).get_xPosition() - blueTeam.getPlayer(i).get_radius() / 2, (float) blueTeam.getPlayer(i).get_yPosition() - blueTeam.getPlayer(i).get_radius() / 2,
-					blueTeam.getPlayer(i).get_radius(), blueTeam.getPlayer(i).get_radius());
+			if(playerBall != p) {
+				
+				graphics.setColor(new Color(255, 0, 0));
+			}
+			else {
+				
+				graphics.setColor(new Color(0, 255, 0));
+			}
+			
+			graphics.fillOval((float) p.get_xPosition() - p.get_radius() / 2, (float) p.get_yPosition() - p.get_radius() / 2,
+					p.get_radius(), p.get_radius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+					p.get_reflexRadius(), p.get_reflexRadius());
+			
+			p = blueTeam.getPlayer(i);
+			
+			if(playerBall != p) {
+				
+				graphics.setColor(new Color(0, 0, 255));
+			}
+			else {
+				
+				graphics.setColor(new Color(0, 255, 0));
+			}
+			
+			graphics.fillOval((float) p.get_xPosition() - p.get_radius() / 2, (float) p.get_yPosition() - p.get_radius() / 2,
+					p.get_radius(), p.get_radius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+					p.get_reflexRadius(), p.get_reflexRadius());
 		}
 		
 		
@@ -56,6 +80,8 @@ public class Game extends BasicGame {
 		blueTeam.makeBlueTeam();
 		
 		playerController = new PlayerController(stadium);
+		
+		playerBall = blueTeam.getPlayer(Team.MF);
 	}
 	
 	@Override
@@ -65,6 +91,16 @@ public class Game extends BasicGame {
 		{
 			Player redPlayer = redTeam.getPlayer(i);
 			Player bluePlayer = blueTeam.getPlayer(i);
+			
+			Vector<Player> catchers = null;
+			if((catchers = playerController.isCaught(redPlayer, blueTeam)).size() > 0) {
+				
+				System.out.println("Player : " + i + " caught by " + catchers.size() + " player(s).");
+			}
+			if((catchers = playerController.isCaught(bluePlayer, redTeam)).size() > 0) {
+				
+				System.out.println("Player : " + i + " caught by " + catchers.size() + " player(s).");
+			}
 			
 			playerController.goFollowPlayer(redPlayer, bluePlayer);
 			

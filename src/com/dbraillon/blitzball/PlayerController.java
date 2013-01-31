@@ -1,5 +1,7 @@
 package com.dbraillon.blitzball;
 
+import java.util.Vector;
+
 public class PlayerController {
 
 	private Stadium _stadium;
@@ -105,5 +107,22 @@ public class PlayerController {
 		
 		follower.changeDirection(angle);
 		follower.goForward(rv);
+	}
+
+	public Vector<Player> isCaught(Player player, Team team) {
+
+		Vector<Player> catchers = new Vector<Player>();
+		
+		for(int i = 0; i < team.PLAYER_COUNT; i++) {
+			
+			Player p = team.getPlayer(i);
+			double d = Math.sqrt(Math.pow(p.get_xPosition() - player.get_xPosition(), 2) + Math.pow(p.get_yPosition() - player.get_yPosition(), 2));
+			if(d < p.get_reflexRadius()) {
+				
+				catchers.add(p);
+			}
+		}
+		
+		return catchers;
 	}
 }

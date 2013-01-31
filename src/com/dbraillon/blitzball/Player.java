@@ -7,6 +7,7 @@ public class Player {
 	
 	// diamètre du joueur en comptant les bords
 	private int _radius;
+	private int _reflexRadius;
 	
 	private double _directionDegrees;
 	
@@ -25,7 +26,8 @@ public class Player {
 	
 	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca) {
 		
-		set_radius(5);
+		set_radius(10);
+		set_reflexRadius(100);
 		
 		set_xPosition(0);
 		set_yPosition(0);
@@ -83,5 +85,13 @@ public class Player {
 
 	public void set_radius(int _radius) {
 		this._radius = _radius;
+	}
+
+	public int get_reflexRadius() {
+		return _reflexRadius;
+	}
+
+	public void set_reflexRadius(int _reflexRadius) {
+		this._reflexRadius = _reflexRadius;
 	}
 }
