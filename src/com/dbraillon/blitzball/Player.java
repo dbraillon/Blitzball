@@ -1,5 +1,7 @@
 package com.dbraillon.blitzball;
 
+import javax.crypto.spec.PSource;
+
 public class Player {
 
 	private double _xPosition;
@@ -23,11 +25,13 @@ public class Player {
 	public int sh; // shoot
 	public int ca; // catch
 	
+	public int position;
+	public Team team;
 	
 	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca) {
 		
 		set_radius(10);
-		set_reflexRadius(100);
+		set_reflexRadius(75);
 		
 		set_xPosition(0);
 		set_yPosition(0);
@@ -93,5 +97,27 @@ public class Player {
 
 	public void set_reflexRadius(int _reflexRadius) {
 		this._reflexRadius = _reflexRadius;
+	}
+	
+	@Override
+	public String toString() {
+		
+		switch(position) {
+		
+			case 0:
+				return team.toString() + " : Attaquant gauche";
+			case 1:
+				return team.toString() + " : Attaquant droit";
+			case 2:
+				return team.toString() + " : Milieu";
+			case 3:
+				return team.toString() + " : Défenseur gauche";
+			case 4:
+				return team.toString() + " : Défenseur droit";
+			case 5:
+				return team.toString() + " : Gardien";
+			default:
+				return team.toString() + " : Personne";	
+		}
 	}
 }

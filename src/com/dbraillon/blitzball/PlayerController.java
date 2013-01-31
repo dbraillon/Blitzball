@@ -1,5 +1,6 @@
 package com.dbraillon.blitzball;
 
+import java.util.Random;
 import java.util.Vector;
 
 public class PlayerController {
@@ -124,5 +125,31 @@ public class PlayerController {
 		}
 		
 		return catchers;
+	}
+	
+	public Player attack(Vector<Player> attackers, Player defensor) {
+		
+		int d = defensor.en;
+		
+		System.out.println("EN " + defensor.toString() + " : " + d);
+		
+		for(Player attacker : attackers) {
+			
+			Random r = new Random();
+			double percant = r.nextDouble() + 0.5;
+			long at = Math.round(attacker.at * percant);
+			
+			d -= at;
+			
+			System.out.println("AT " + attacker.toString() + " : " + at);
+			System.out.println("EN " + defensor.toString() + " : " + d);
+			
+			if(d <= 0)
+			{
+				return attacker;
+			}
+		}
+		
+		return defensor;
 	}
 }

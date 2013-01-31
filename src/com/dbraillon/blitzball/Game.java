@@ -92,15 +92,32 @@ public class Game extends BasicGame {
 			Player redPlayer = redTeam.getPlayer(i);
 			Player bluePlayer = blueTeam.getPlayer(i);
 			
-			Vector<Player> catchers = null;
-			if((catchers = playerController.isCaught(redPlayer, blueTeam)).size() > 0) {
+			if(redPlayer == playerBall) {
 				
-				System.out.println("Player : " + i + " caught by " + catchers.size() + " player(s).");
-			}
-			if((catchers = playerController.isCaught(bluePlayer, redTeam)).size() > 0) {
+				Vector<Player> catchers = null;
+				if((catchers = playerController.isCaught(playerBall, blueTeam)).size() > 0) {
+					
+					System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+				}
 				
-				System.out.println("Player : " + i + " caught by " + catchers.size() + " player(s).");
+				if(catchers.size() > 0) {
+					playerBall = playerController.attack(catchers, playerBall);
+				}
 			}
+			
+			if(bluePlayer == playerBall) {
+				
+				Vector<Player> catchers = null;
+				if((catchers = playerController.isCaught(playerBall, redTeam)).size() > 0) {
+					
+					System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+				}
+				
+				if(catchers.size() > 0) {
+					playerBall = playerController.attack(catchers, playerBall);
+				}
+			}
+			
 			
 			playerController.goFollowPlayer(redPlayer, bluePlayer);
 			
