@@ -1,20 +1,20 @@
 package com.dbraillon.blitzball;
 
-import javax.crypto.spec.PSource;
-
 public class Player {
 
-	private double _xPosition;
-	private double _yPosition;
+	private double xOriginPosition;
+	private double yOriginPosition;
+	private double xPosition;
+	private double yPosition;
 	
-	// diamètre du joueur en comptant les bords
-	private int _radius;
-	private int _reflexRadius;
+	private int playerRadius;
+	private int caughtRadius;
+	private int reflexRadius;
+	private int followRadius;
 	
-	private double _directionDegrees;
-	
-	public double xMove;
-	public double yMove;
+	private double directionDegrees;
+	private double xMove;
+	private double yMove;
 	
 	public int hp; // health point
 	public int sp; // speed
@@ -25,18 +25,23 @@ public class Player {
 	public int sh; // shoot
 	public int ca; // catch
 	
-	public int position;
+	public int pos;
 	public Team team;
 	
-	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca) {
+	
+	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca,
+				  int xOriginPosition, int yOriginPosition, int pos, Team team) {
 		
-		set_radius(10);
-		set_reflexRadius(75);
+		this.set_PlayerRadius(10);
+		this.set_reflexRadius(50);
+		this.set_CaughtRadius(70);
+		this.set_FollowRadius(210);
 		
-		set_xPosition(0);
-		set_yPosition(0);
+		set_xOriginPosition(xOriginPosition);
+		set_yOriginPosition(yOriginPosition);
 		
-		changeDirection(180);
+		this.pos = pos;
+		this.team = team;
 		
 		this.hp = hp;
 		this.sp = sp;
@@ -47,62 +52,30 @@ public class Player {
 		this.sh = sh;
 		this.ca = ca;
 	}
-	
+
 	public void changeDirection(double directionDegrees) {
 		
-		_directionDegrees = directionDegrees;
-		xMove = Math.cos(Math.toRadians(_directionDegrees));
-		yMove = 0 - Math.sin(Math.toRadians(_directionDegrees));
+		this.set_DirectionDegrees(directionDegrees);
+		set_xMove(Math.cos(Math.toRadians(directionDegrees)));
+		set_yMove(0 - Math.sin(Math.toRadians(directionDegrees)));
 	}
 	
 	public void goForward(double velocity) {
 		
-		set_xPosition(get_xPosition() + velocity * xMove);
-		set_yPosition(get_yPosition() + velocity * yMove);
-	}
-
-	public double get_xPosition() {
-		return _xPosition;
-	}
-
-	public void set_xPosition(double _xPosition) {
-		this._xPosition = _xPosition;
-	}
-
-	public double get_yPosition() {
-		return _yPosition;
-	}
-
-	public void set_yPosition(double _yPosition) {
-		this._yPosition = _yPosition;
+		set_xPosition(get_xPosition() + velocity * get_xMove());
+		set_yPosition(get_yPosition() + velocity * get_yMove());
 	}
 	
-	public void set_position(double xPosition, double yPosition) {
+	public void setPosition(double xPosition, double yPosition) {
 		
-		_xPosition = xPosition;
-		_yPosition = yPosition;
-	}
-
-	public int get_radius() {
-		return _radius;
-	}
-
-	public void set_radius(int _radius) {
-		this._radius = _radius;
-	}
-
-	public int get_reflexRadius() {
-		return _reflexRadius;
-	}
-
-	public void set_reflexRadius(int _reflexRadius) {
-		this._reflexRadius = _reflexRadius;
+		this.xPosition = xPosition;
+		this.yPosition = yPosition;
 	}
 	
 	@Override
 	public String toString() {
 		
-		switch(position) {
+		switch(pos) {
 		
 			case 0:
 				return team.toString() + " : Attaquant gauche";
@@ -119,5 +92,97 @@ public class Player {
 			default:
 				return team.toString() + " : Personne";	
 		}
+	}
+	
+	public double get_xPosition() {
+		return xPosition;
+	}
+
+	public void set_xPosition(double _xPosition) {
+		this.xPosition = _xPosition;
+		
+	}
+
+	public double get_yPosition() {
+		return yPosition;
+	}
+
+	public void set_yPosition(double _yPosition) {
+		this.yPosition = _yPosition;
+		
+	}
+	
+	public int get_reflexRadius() {
+		return reflexRadius;
+	}
+
+	public void set_reflexRadius(int _reflexRadius) {
+		this.reflexRadius = _reflexRadius;
+	}
+
+	public double get_xOriginPosition() {
+		return xOriginPosition;
+	}
+
+	public void set_xOriginPosition(double xOriginPosition) {
+		this.xOriginPosition = xOriginPosition;
+		this.xPosition = xOriginPosition;
+	}
+
+	public double get_yOriginPosition() {
+		return yOriginPosition;
+	}
+
+	public void set_yOriginPosition(double yOriginPosition) {
+		this.yOriginPosition = yOriginPosition;
+		this.yPosition = yOriginPosition;
+	}
+
+	public int get_PlayerRadius() {
+		return playerRadius;
+	}
+
+	public void set_PlayerRadius(int playerRadius) {
+		this.playerRadius = playerRadius;
+	}
+
+	public int get_FollowRadius() {
+		return followRadius;
+	}
+
+	public void set_FollowRadius(int followRadius) {
+		this.followRadius = followRadius;
+	}
+
+	public double get_DirectionDegrees() {
+		return directionDegrees;
+	}
+
+	public void set_DirectionDegrees(double directionDegrees) {
+		this.directionDegrees = directionDegrees;
+	}
+
+	public double get_xMove() {
+		return xMove;
+	}
+
+	public void set_xMove(double xMove) {
+		this.xMove = xMove;
+	}
+
+	public double get_yMove() {
+		return yMove;
+	}
+
+	public void set_yMove(double yMove) {
+		this.yMove = yMove;
+	}
+
+	public int get_CaughtRadius() {
+		return caughtRadius;
+	}
+
+	public void set_CaughtRadius(int caughtRadius) {
+		this.caughtRadius = caughtRadius;
 	}
 }

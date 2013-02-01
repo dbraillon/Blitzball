@@ -1,6 +1,5 @@
 package com.dbraillon.blitzball;
 
-import java.util.Random;
 import java.util.Vector;
 
 import org.newdawn.slick.AppGameContainer;
@@ -43,10 +42,12 @@ public class Game extends BasicGame {
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
-			graphics.fillOval((float) p.get_xPosition() - p.get_radius() / 2, (float) p.get_yPosition() - p.get_radius() / 2,
-					p.get_radius(), p.get_radius());
+			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
+					p.get_PlayerRadius(), p.get_PlayerRadius());
 			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
 					p.get_reflexRadius(), p.get_reflexRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+					p.get_FollowRadius(), p.get_FollowRadius());
 			
 			p = blueTeam.getPlayer(i);
 			
@@ -59,10 +60,12 @@ public class Game extends BasicGame {
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
-			graphics.fillOval((float) p.get_xPosition() - p.get_radius() / 2, (float) p.get_yPosition() - p.get_radius() / 2,
-					p.get_radius(), p.get_radius());
+			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
+					p.get_PlayerRadius(), p.get_PlayerRadius());
 			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
 					p.get_reflexRadius(), p.get_reflexRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+					p.get_FollowRadius(), p.get_FollowRadius());
 		}
 		
 		
@@ -73,10 +76,10 @@ public class Game extends BasicGame {
 		
 		stadium = new Stadium();
 		
-		redTeam = new Team();
+		redTeam = new Team("Red team", 1);
 		redTeam.makeRedTeam();
 		
-		blueTeam = new Team();
+		blueTeam = new Team("Blue team", 0);
 		blueTeam.makeBlueTeam();
 		
 		playerController = new PlayerController(stadium);
@@ -118,8 +121,17 @@ public class Game extends BasicGame {
 				}
 			}
 			
+			if(!playerController.makeADecision(redPlayer, playerBall, redTeam, blueTeam)) {
+				
+				playerController.goForwardControl(redPlayer, redPlayer.sp / 10);
+			}
 			
-			playerController.goFollowPlayer(redPlayer, bluePlayer);
+			if(!playerController.makeADecision(bluePlayer, playerBall, blueTeam, redTeam)) {
+				
+				playerController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
+			}
+			
+			/*playerController.goFollowPlayer(redPlayer, bluePlayer);
 			
 			if(!playerController.goForwardControl(bluePlayer)) {
 				
@@ -127,7 +139,7 @@ public class Game extends BasicGame {
 				int direction = r.nextInt(360);
 				
 				bluePlayer.changeDirection(direction);
-			}
+			}*/
 		}	
 	}
 

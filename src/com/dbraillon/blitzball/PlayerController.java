@@ -7,49 +7,44 @@ public class PlayerController {
 
 	private Stadium _stadium;
 	
+	
 	public PlayerController(Stadium stadium) {
 		
 		_stadium = stadium;
 	}
 	
-	public boolean goForwardControl(Player player) {
+	
+	public boolean goForwardControl(Player player, double v) {
 		
 		boolean b = true;
 		
-		double v = player.sp / 10;
 		double sr = _stadium.get_radius() / 2;
 		
-		// positition actuelle
+		// position actuelle
 		double xc = player.get_xPosition();
 		double yc = player.get_yPosition();
 		double dc = Math.sqrt(Math.pow(xc - sr,  2) + Math.pow(yc - sr, 2));
 		
 		// position future
-		double xf = xc + player.xMove * v;
-		double yf = yc + player.yMove * v;
+		double xf = xc + player.get_xMove() * v;
+		double yf = yc + player.get_yMove() * v;
 		double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2));
 		
 		v = (df >= sr) ? sr - dc : v;
 		
-		if(v < 1)
-		{
-			b = false;
-		}
+		if(v < 1) b = false;
 		
 		player.goForward(v);
 		
 		return b;
 	}
 	
-	public void goFollowPlayer(Player follower, Player followed)
+	public void goFollowPlayer(Player follower, double dx, double dy)
 	{
 		double rv = follower.sp / 10;
-		double dv = followed.sp / 10;
 		
 		double rx = follower.get_xPosition();
 		double ry = follower.get_yPosition();
-		double dx = followed.get_xPosition();
-		double dy = followed.get_yPosition();
 		
 		// troisième point
 		double tx = dx;
@@ -106,32 +101,72 @@ public class PlayerController {
 			angle = 180;
 		}
 		
-		follower.changeDirection(angle);
-		follower.goForward(rv);
+		if(rd == 0) {
+			
+			follower.set_xMove(0);
+			follower.set_yMove(0);
+		}
+		else {
+			
+			follower.changeDirection(angle);
+		}
+		
+		if(rd < rv) rv = rd - (rd*10/100);
+		if(rv < 1) rv = 0;
+		goForwardControl(follower, rv);
 	}
 
-	public Vector<Player> isCaught(Player player, Team team) {
+	public Vector<Player> isCaught(Player pBall, Team tEnnemy) {
 
-		Vector<Player> catchers = new Vector<Player>();
+		Vector<Player> cEnnemy = new Vector<Player>();
 		
-		for(int i = 0; i < team.PLAYER_COUNT; i++) {
+		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
-			Player p = team.getPlayer(i);
-			double d = Math.sqrt(Math.pow(p.get_xPosition() - player.get_xPosition(), 2) + Math.pow(p.get_yPosition() - player.get_yPosition(), 2));
-			if(d < p.get_reflexRadius()) {
-				
-				catchers.add(p);
+			Player c = tEnnemy.getPlayer(i);
+			if(c.pos != Team.GL) {
+			
+				double d = Math.sqrt(Math.pow(c.get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(c.get_yPosition() - pBall.get_yPosition(), 2));
+				if(d < c.get_reflexRadius() / 2) {
+					
+					cEnnemy.add(c);
+					
+					for(int ii = 0; ii < Team.PLAYER_COUNT; ii++) {
+						
+						Player cc = tEnnemy.getPlayer(ii);
+						if(cc.pos != Team.GL && cc != c) {
+							
+							double dd = Math.sqrt(Math.pow(cc.get_xPosition() - pBall.get_xPosition(),  2) + Math.pow(cc.get_yPosition() - pBall.get_yPosition(), 2));
+							if(dd < cc.get_CaughtRadius() / 2) {
+								
+								cEnnemy.add(cc);
+							}
+						}
+					}
+					
+					return cEnnemy;
+				}
 			}
 		}
 		
-		return catchers;
+		return cEnnemy;
 	}
 	
-	public Player attack(Vector<Player> attackers, Player defensor) {
+	public boolean isFollow(Player pMe, Player pBall) {
 		
-		int d = defensor.en;
+		double d = Math.sqrt(Math.pow(pMe.get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(pMe.get_yPosition() - pBall.get_yPosition(), 2));
+		if(d < pMe.get_FollowRadius() / 2) {
+			
+			return true;
+		}
 		
-		System.out.println("EN " + defensor.toString() + " : " + d);
+		return false;
+	}
+	
+	public Player attack(Vector<Player> attackers, Player pBall) {
+		
+		int en = pBall.en;
+		
+		System.out.println("EN " + pBall.toString() + " : " + en);
 		
 		for(Player attacker : attackers) {
 			
@@ -139,17 +174,116 @@ public class PlayerController {
 			double percant = r.nextDouble() + 0.5;
 			long at = Math.round(attacker.at * percant);
 			
-			d -= at;
+			en -= at;
 			
 			System.out.println("AT " + attacker.toString() + " : " + at);
-			System.out.println("EN " + defensor.toString() + " : " + d);
+			System.out.println("EN " + pBall.toString() + " : " + en);
 			
-			if(d <= 0)
+			attackAnim(pBall, attacker);
+			
+			if(en <= 0)
 			{
 				return attacker;
 			}
 		}
 		
-		return defensor;
+		return pBall;
+	}
+	
+	public void attackAnim(Player pBall, Player attacker) {
+		
+		double bx = pBall.get_xPosition();
+		double by = pBall.get_yPosition();
+		double ax = attacker.get_xPosition();
+		double ay = attacker.get_yPosition();
+		
+		double dx = Math.abs(bx - ax) * 4;
+		double dy = Math.abs(by - ay) * 4;
+		
+		double fx = (bx < ax) ? bx - dx : bx + dx;
+		double fy = (by < by) ? by + dy : by - dy;
+		
+		double d = Math.sqrt(Math.pow(ax - fx, 2) + Math.pow(ay - fy, 2));
+		long i = (long) (d / (attacker.sp / 10));
+		
+		for(long ii = 0; ii < i; ii++) {
+			
+			goFollowPlayer(attacker, fx, fy);
+		}
+	}
+	
+	public boolean shoot(Player pBall, Player goalie) {
+		
+		double d = Math.sqrt(Math.pow(goalie.get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(goalie.get_yPosition() - pBall.get_yPosition(), 2));
+		
+		d = d / 20;
+		Random r = new Random();
+		double percant = r.nextDouble() + 0.5;
+		long ca = Math.round(goalie.ca * percant);
+		long sh = pBall.sh;
+		
+		sh -= d;
+		
+		if(sh > ca) return true;
+		
+		return false;
+	}
+	
+	public boolean makeADecision(Player pMe, Player pBall, Team tFriend, Team tEnnemy)
+	{
+		if(pMe.pos == Team.GL) return false;
+		
+		// qui a le ballon ?
+		if(pMe.team == pBall.team) {
+			
+			// quelqu'un de ma team ! mais qui ?
+			if(pMe == pBall) {
+				
+				// c'est moi !
+				double d = Math.sqrt(Math.pow(tEnnemy.getPlayer(Team.GL).get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(tEnnemy.getPlayer(Team.GL).get_yPosition() - pBall.get_yPosition(), 2));
+				if(d/20 < pMe.sh * 70 / 100) {
+					
+					if(shoot(pBall, tEnnemy.getPlayer(Team.GL))) {
+						
+						System.out.println("GOAL !");
+						
+						if(tEnnemy.get_Position() == 0) tEnnemy.makeBlueTeam(); 
+						else tEnnemy.makeRedTeam();
+						
+						if(tFriend.get_Position() == 0) tFriend.makeBlueTeam(); 
+						else tFriend.makeRedTeam();
+					}
+					else {
+						
+						System.out.println("MISS !");
+					}
+				}
+				
+				goFollowPlayer(pMe, tEnnemy.getPlayer(Team.GL).get_xPosition(), tEnnemy.getPlayer(Team.GL).get_yPosition());
+			}
+			else {
+				
+				//pMe.set_xMove(pBall.get_xMove());
+				//pMe.set_yMove(pBall.get_yMove());
+				
+				goFollowPlayer(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
+			}
+		}
+		else {
+			
+			// quelqu'un de la team adverse !
+			if(isFollow(pMe, pBall)) {
+				
+				goFollowPlayer(pMe, pBall.get_xPosition(), pBall.get_yPosition());
+				return true;
+			}
+			else {
+				
+				goFollowPlayer(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
