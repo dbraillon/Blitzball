@@ -44,10 +44,10 @@ public class Game extends BasicGame {
 			
 			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
 					p.get_PlayerRadius(), p.get_PlayerRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-					p.get_reflexRadius(), p.get_reflexRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-					p.get_FollowRadius(), p.get_FollowRadius());
+			//graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+			//		p.get_reflexRadius(), p.get_reflexRadius());
+			//graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+			//		p.get_FollowRadius(), p.get_FollowRadius());
 			
 			p = blueTeam.getPlayer(i);
 			
@@ -62,10 +62,10 @@ public class Game extends BasicGame {
 			
 			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
 					p.get_PlayerRadius(), p.get_PlayerRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-					p.get_reflexRadius(), p.get_reflexRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-					p.get_FollowRadius(), p.get_FollowRadius());
+			//graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+			//		p.get_reflexRadius(), p.get_reflexRadius());
+			//graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+			//		p.get_FollowRadius(), p.get_FollowRadius());
 		}
 		
 		
@@ -147,7 +147,7 @@ public class Game extends BasicGame {
 		
 		AppGameContainer app = new AppGameContainer(new Game("Blitzball"));
 		app.setDisplayMode(800, 600, false);
-		app.setTargetFrameRate(30);
+		app.setTargetFrameRate(10);
 		app.start();
 	}
 }
