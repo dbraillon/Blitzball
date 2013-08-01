@@ -7,10 +7,10 @@ public class Player {
 	private double xPosition;
 	private double yPosition;
 	
-	private int playerRadius;
-	private int caughtRadius;
-	private int reflexRadius;
-	private int followRadius;
+	private int playerRadius; // cercle du joueur
+	private int caughtRadius; // si quelqu'un rentre dans ce cercle, il attrape le joueur
+	private int reflexRadius; // si quelqu'un reste dans ce cercle pendant 2 secondes il attrape le joueur
+	private int followRadius; // cercle de poursuite du joueur
 	
 	private double directionDegrees;
 	private double xMove;
@@ -33,8 +33,8 @@ public class Player {
 				  int xOriginPosition, int yOriginPosition, int pos, Team team) {
 		
 		this.set_PlayerRadius(10);
-		this.set_reflexRadius(50);
-		this.set_CaughtRadius(70);
+		this.set_reflexRadius(100);
+		this.set_CaughtRadius(50);
 		this.set_FollowRadius(210);
 		
 		set_xOriginPosition(xOriginPosition);

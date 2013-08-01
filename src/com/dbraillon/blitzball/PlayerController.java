@@ -118,7 +118,8 @@ public class PlayerController {
 
 	public Vector<Player> isCaught(Player pBall, Team tEnnemy) {
 
-		Vector<Player> cEnnemy = new Vector<Player>();
+		Vector<Player> cEnnemy = new Vector<Player>(); // ennemy that caught pBall
+		Vector<Player> rEnnemy = new Vector<Player>(); // ennemy that is in reflex radius and will help if someone caught pBall
 		
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
@@ -126,26 +127,21 @@ public class PlayerController {
 			if(c.pos != Team.GL) {
 			
 				double d = Math.sqrt(Math.pow(c.get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(c.get_yPosition() - pBall.get_yPosition(), 2));
-				if(d < c.get_reflexRadius() / 2) {
+				if(d < c.get_CaughtRadius() / 2) {
 					
 					cEnnemy.add(c);
-					
-					for(int ii = 0; ii < Team.PLAYER_COUNT; ii++) {
-						
-						Player cc = tEnnemy.getPlayer(ii);
-						if(cc.pos != Team.GL && cc != c) {
-							
-							double dd = Math.sqrt(Math.pow(cc.get_xPosition() - pBall.get_xPosition(),  2) + Math.pow(cc.get_yPosition() - pBall.get_yPosition(), 2));
-							if(dd < cc.get_CaughtRadius() / 2) {
-								
-								cEnnemy.add(cc);
-							}
-						}
-					}
-					
-					return cEnnemy;
+				}
+				else if(d < c.get_reflexRadius() / 2)
+				{
+					rEnnemy.add(c);
 				}
 			}
+		}
+		
+		// if someone caught pBall all player in reflex radius help him
+		if(cEnnemy.size() > 0) {
+			
+			cEnnemy.addAll(rEnnemy);
 		}
 		
 		return cEnnemy;

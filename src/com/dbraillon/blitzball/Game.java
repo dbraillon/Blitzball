@@ -44,10 +44,12 @@ public class Game extends BasicGame {
 			
 			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
 					p.get_PlayerRadius(), p.get_PlayerRadius());
-			//graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-			//		p.get_reflexRadius(), p.get_reflexRadius());
-			//graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-			//		p.get_FollowRadius(), p.get_FollowRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_CaughtRadius() / 2, (float) p.get_yPosition() - p.get_CaughtRadius() / 2,
+					p.get_CaughtRadius(), p.get_CaughtRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+					p.get_reflexRadius(), p.get_reflexRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+					p.get_FollowRadius(), p.get_FollowRadius());
 			
 			p = blueTeam.getPlayer(i);
 			
@@ -62,10 +64,10 @@ public class Game extends BasicGame {
 			
 			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
 					p.get_PlayerRadius(), p.get_PlayerRadius());
-			//graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-			//		p.get_reflexRadius(), p.get_reflexRadius());
-			//graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-			//		p.get_FollowRadius(), p.get_FollowRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
+					p.get_reflexRadius(), p.get_reflexRadius());
+			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
+					p.get_FollowRadius(), p.get_FollowRadius());
 		}
 		
 		
@@ -90,6 +92,63 @@ public class Game extends BasicGame {
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		
+		/** 
+		 * en travaux
+		 * 
+		 * si quelqu'un fait une passe
+		 *   
+		 * sinon si quelqu'un fait un tir
+		 * 
+		 * sinon si quelqu'un est attrapé
+		 *   
+		 *   affichage des bloqueurs et du bloqué (stats)
+		 *   les bloqueurs avancent devant le porteur de ballon à une vitesse eleve
+		 *   si ils ont tous atteint leur point
+		 *     passage en mode tacle
+		 * 
+		 * sinon si quelqu'un tacle
+		 * 
+		 * 	 si personne n'attaque
+		 *     récupération du plus gros AT
+		 *   
+		 *   si personne n'attaque
+		 *     passage en mode normal
+		 *     on passe le reste
+		 *     
+		 *   l'attaquant avance derriere le bloqué
+		 *   si l'attaquant est sur le bloqué pour la premiere fois
+		 *     si EN - AT <= 0
+		 *       la balle passe à l'attaquant et le reflex du bloqué passe à 0
+		 *       les autres attaquant ont leur reflex au max
+		 *   si l'attaquant est à sa destination
+		 *     attaquant = null
+		 *     reflex de l'attaquant = 0
+		 *     attaquant enlevé de la liste des attaquants 
+		 *     
+		 * sinon
+		 * 	 
+		 *   boucle sur les joueurs
+		 *     
+		 *     si le joueur a le ballon
+		 *       recuperation des joueurs adverse qui le bloque
+		 *       si le joueur est bloqué
+		 *         on passe la liste des bloqueurs en globale
+		 *         passage en mode attrapé
+		 *         on passe le reste
+		 *     
+		 *     si le joueur n'a aucune décision ou si le joueur
+		 *     a atteint son seuil de reflex
+		 *       il prend une décision
+		 *       seuil de reflex remis à zéro
+		 *     
+		 *     incrémentation du reflex du joueur
+		 *     
+		 *     
+		 *     le joueur avance si il en a besoin
+		 * 
+		 */
+		
+		
 		for(int i = 0; i < Team.PLAYER_COUNT; i++)
 		{
 			Player redPlayer = redTeam.getPlayer(i);
@@ -104,6 +163,7 @@ public class Game extends BasicGame {
 				}
 				
 				if(catchers.size() > 0) {
+					
 					playerBall = playerController.attack(catchers, playerBall);
 				}
 			}
