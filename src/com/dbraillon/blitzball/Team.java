@@ -28,6 +28,8 @@ public class Team {
 	
 	public void makeBlueTeam() {
 		
+		teamName = "Blue team";
+		
 		// shooter
 		Player leftShooter = new Player(132, 60, 10, 3, 3, 2, 10, 1, 250, 150, LF, this);
 		players.add(leftShooter);
@@ -52,6 +54,8 @@ public class Team {
 	}
 	
 	public void makeRedTeam() {
+		
+		teamName = "Red team";
 		
 		// shooter
 		Player leftShooter = new Player(329, 40, 16, 5, 5, 4, 10, 1, 350, 150, LF, this);

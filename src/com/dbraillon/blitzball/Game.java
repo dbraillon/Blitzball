@@ -17,6 +17,15 @@ public class Game extends BasicGame {
 	private PlayerController playerController;
 	private Player playerBall;
 	
+	private Vector<Player> catchers;
+	
+	private States state;
+	private enum States {
+		NORMAL, PASS, SHOOT, CAUGHT, ATTACK
+	}
+	
+	private Player attacker;
+	
 	public Game(String title) {
 		super(title);
 	}
@@ -70,7 +79,18 @@ public class Game extends BasicGame {
 					p.get_FollowRadius(), p.get_FollowRadius());
 		}
 		
-		
+		if(state == States.CAUGHT || state == States.ATTACK) {
+			
+			int i = 0;
+			
+			graphics.drawString(playerBall.toString() + " EN : " + playerBall.en, 550, 50);
+			
+			for(Player pAttacker : catchers) {
+				
+				graphics.drawString(pAttacker.toString() + " AT : " + pAttacker.at, 550, 70 + 20 * i);
+				i++;
+			}
+		}
 	}
 
 	@Override
@@ -87,10 +107,132 @@ public class Game extends BasicGame {
 		playerController = new PlayerController(stadium);
 		
 		playerBall = blueTeam.getPlayer(Team.MF);
+		
+		state = States.NORMAL;
 	}
 	
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
+		
+		switch (state)
+		{
+			case SHOOT:
+			{
+				break;
+			}
+			case PASS:
+			{
+				break;
+			}
+			case ATTACK:
+			{
+				if(attacker == null) {
+					
+					if(catchers.size() > 0) {
+					
+						attacker = catchers.firstElement();
+					}
+					else {
+						
+						state = States.NORMAL;
+					}
+				}
+				else
+				{
+					if(playerController.attackAnim(playerBall, attacker)) {
+						
+						if(playerController.attack(attacker, playerBall) == attacker) {
+							
+							playerBall = attacker;
+						}
+						
+						attacker = null;
+					}
+				}
+				
+				break;
+			}
+			case CAUGHT:
+			{
+				int i = 0;
+				Vector<Boolean> inPosition = new Vector<Boolean>();
+				
+				for(Player pAttacker : catchers) {
+					
+					inPosition.add(playerController.catchPositioning(pAttacker, playerBall, i));
+					i++;
+				}
+				
+				if(!inPosition.contains(Boolean.FALSE)) {
+					
+					state = States.ATTACK; 
+				}
+					
+				
+				break;
+			}
+			case NORMAL:
+			{
+				for(int i = 0; i < Team.PLAYER_COUNT; i++)
+				{
+					Player redPlayer = redTeam.getPlayer(i);
+					Player bluePlayer = blueTeam.getPlayer(i);
+					
+					if(redPlayer == playerBall) {
+						
+						if((catchers = playerController.isCaught(playerBall, blueTeam)).size() > 0) {
+							
+							state = States.CAUGHT;
+							System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+						}
+						
+						/*
+						if(catchers.size() > 0) {
+							
+							playerBall = playerController.attack(catchers, playerBall);
+						}
+						*/
+					}
+					
+					if(bluePlayer == playerBall) {
+						
+						if((catchers = playerController.isCaught(playerBall, redTeam)).size() > 0) {
+							
+							state = States.CAUGHT;
+							System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+						}
+						
+						/*
+						if(catchers.size() > 0) {
+							playerBall = playerController.attack(catchers, playerBall);
+						}
+						*/
+					}
+					
+					if(!playerController.makeADecision(redPlayer, playerBall, redTeam, blueTeam)) {
+						
+						playerController.goForwardControl(redPlayer, redPlayer.sp / 10);
+					}
+					
+					if(!playerController.makeADecision(bluePlayer, playerBall, blueTeam, redTeam)) {
+						
+						playerController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
+					}
+					
+					/*playerController.goFollowPlayer(redPlayer, bluePlayer);
+					
+					if(!playerController.goForwardControl(bluePlayer)) {
+						
+						Random r = new Random();
+						int direction = r.nextInt(360);
+						
+						bluePlayer.changeDirection(direction);
+					}*/
+				}
+				
+				break;
+			}
+		}
 		
 		/** 
 		 * en travaux
@@ -146,68 +288,14 @@ public class Game extends BasicGame {
 		 *     
 		 *     le joueur avance si il en a besoin
 		 * 
-		 */
-		
-		
-		for(int i = 0; i < Team.PLAYER_COUNT; i++)
-		{
-			Player redPlayer = redTeam.getPlayer(i);
-			Player bluePlayer = blueTeam.getPlayer(i);
-			
-			if(redPlayer == playerBall) {
-				
-				Vector<Player> catchers = null;
-				if((catchers = playerController.isCaught(playerBall, blueTeam)).size() > 0) {
-					
-					System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
-				}
-				
-				if(catchers.size() > 0) {
-					
-					playerBall = playerController.attack(catchers, playerBall);
-				}
-			}
-			
-			if(bluePlayer == playerBall) {
-				
-				Vector<Player> catchers = null;
-				if((catchers = playerController.isCaught(playerBall, redTeam)).size() > 0) {
-					
-					System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
-				}
-				
-				if(catchers.size() > 0) {
-					playerBall = playerController.attack(catchers, playerBall);
-				}
-			}
-			
-			if(!playerController.makeADecision(redPlayer, playerBall, redTeam, blueTeam)) {
-				
-				playerController.goForwardControl(redPlayer, redPlayer.sp / 10);
-			}
-			
-			if(!playerController.makeADecision(bluePlayer, playerBall, blueTeam, redTeam)) {
-				
-				playerController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
-			}
-			
-			/*playerController.goFollowPlayer(redPlayer, bluePlayer);
-			
-			if(!playerController.goForwardControl(bluePlayer)) {
-				
-				Random r = new Random();
-				int direction = r.nextInt(360);
-				
-				bluePlayer.changeDirection(direction);
-			}*/
-		}	
+		 */	
 	}
 
 	public static void main(String[] args) throws SlickException {
 		
 		AppGameContainer app = new AppGameContainer(new Game("Blitzball"));
 		app.setDisplayMode(800, 600, false);
-		app.setTargetFrameRate(10);
+		app.setTargetFrameRate(5);
 		app.start();
 	}
 }

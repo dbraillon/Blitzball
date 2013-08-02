@@ -206,6 +206,8 @@ public class PlayerController {
 			
 			goFollowPlayer(attacker, fx, fy);
 		}
+		
+		
 	}
 	
 	public boolean shoot(Player pBall, Player goalie) {
@@ -278,6 +280,66 @@ public class PlayerController {
 				goFollowPlayer(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
 				return true;
 			}
+		}
+		
+		return false;
+	}
+
+	public boolean catchPositioning(Player pAttacker, Player playerBall, int i) {
+		
+		double pbx = playerBall.get_xPosition();
+		double pby = playerBall.get_yPosition();
+		
+		double pax = pAttacker.get_xPosition();
+		double pay = pAttacker.get_yPosition();
+		
+		// calcul de la position de l'attaquant par rapport à l'attaqué
+		double posx = 0;
+		double posy = 0;
+		
+		if(playerBall.team.get_Position() == 0) {
+			// la team de gauche donc les attaquants à droite
+			switch(i) {
+				case 0:
+				{
+					goFollowPlayer(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
+					goForwardControl(pAttacker, pAttacker.sp / 10);
+					
+					return isNear(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
+				}
+				case 1:
+				{
+					
+				}
+				case 2:
+				{
+					
+				}
+				case 3:
+				{
+					
+				}
+				case 4:
+				{
+					
+				}
+			}
+		} 
+		else {
+			// la team de droite donc les attaquants à gauche
+			
+		}
+		
+		return false;
+	}
+
+
+	public boolean isNear(Player p, double x, double y) {
+		
+		if(p.get_xPosition() >= x - 1 && p.get_xPosition() <= x + 1
+		&& p.get_yPosition() >= y - 1 && p.get_yPosition() <= y + 1) {
+			
+			return true;
 		}
 		
 		return false;
