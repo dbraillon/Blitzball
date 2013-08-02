@@ -158,40 +158,27 @@ public class PlayerController {
 		return false;
 	}
 	
-	public Player attack(Vector<Player> attackers, Player pBall) {
+	public int attack(int at, int en) {
 		
-		int en = pBall.en;
+		System.out.println("AT: " + at + ", EN: " + en);
 		
-		System.out.println("EN " + pBall.toString() + " : " + en);
+		Random r = new Random();
+		double percant = r.nextDouble() + 0.5;
 		
-		for(Player attacker : attackers) {
-			
-			Random r = new Random();
-			double percant = r.nextDouble() + 0.5;
-			long at = Math.round(attacker.at * percant);
-			
-			en -= at;
-			
-			System.out.println("AT " + attacker.toString() + " : " + at);
-			System.out.println("EN " + pBall.toString() + " : " + en);
-			
-			attackAnim(pBall, attacker);
-			
-			if(en <= 0)
-			{
-				return attacker;
-			}
-		}
+		at = (int) Math.round(at * percant);
+		en -= at;
 		
-		return pBall;
+		System.out.println("AT: " + at + ", EN: " + en);
+		
+		return en;
 	}
 	
-	public void attackAnim(Player pBall, Player attacker) {
+	public boolean attackAnim(Player pBall, Player pAttacker) {
 		
 		double bx = pBall.get_xPosition();
 		double by = pBall.get_yPosition();
-		double ax = attacker.get_xPosition();
-		double ay = attacker.get_yPosition();
+		double ax = pAttacker.get_xPosition();
+		double ay = pAttacker.get_yPosition();
 		
 		double dx = Math.abs(bx - ax) * 4;
 		double dy = Math.abs(by - ay) * 4;
@@ -199,15 +186,10 @@ public class PlayerController {
 		double fx = (bx < ax) ? bx - dx : bx + dx;
 		double fy = (by < by) ? by + dy : by - dy;
 		
-		double d = Math.sqrt(Math.pow(ax - fx, 2) + Math.pow(ay - fy, 2));
-		long i = (long) (d / (attacker.sp / 10));
 		
-		for(long ii = 0; ii < i; ii++) {
-			
-			goFollowPlayer(attacker, fx, fy);
-		}
+		goFollowPlayer(pAttacker, fx, fy);
 		
-		
+		return isNear(pAttacker, fx, fy);
 	}
 	
 	public boolean shoot(Player pBall, Player goalie) {
@@ -336,8 +318,8 @@ public class PlayerController {
 
 	public boolean isNear(Player p, double x, double y) {
 		
-		if(p.get_xPosition() >= x - 1 && p.get_xPosition() <= x + 1
-		&& p.get_yPosition() >= y - 1 && p.get_yPosition() <= y + 1) {
+		if(p.get_xPosition() >= x - 2 && p.get_xPosition() <= x + 2
+		&& p.get_yPosition() >= y - 2 && p.get_yPosition() <= y + 2) {
 			
 			return true;
 		}

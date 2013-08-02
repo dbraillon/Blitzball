@@ -25,11 +25,14 @@ public class Player {
 	public int sh; // shoot
 	public int ca; // catch
 	
+	public int re; // reflex
+	public int cre; // counter reflex
+	
 	public int pos;
 	public Team team;
 	
 	
-	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca,
+	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca, int re,
 				  int xOriginPosition, int yOriginPosition, int pos, Team team) {
 		
 		this.set_PlayerRadius(10);
@@ -51,6 +54,8 @@ public class Player {
 		this.bl = bl;
 		this.sh = sh;
 		this.ca = ca;
+		this.re = re;
+		this.cre = re;
 	}
 
 	public void changeDirection(double directionDegrees) {
@@ -184,5 +189,13 @@ public class Player {
 
 	public void set_CaughtRadius(int caughtRadius) {
 		this.caughtRadius = caughtRadius;
+	}
+
+	public void increaseCRE() {
+		
+		if(cre < re) {
+			
+			cre++;
+		}
 	}
 }

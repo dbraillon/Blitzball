@@ -18,6 +18,7 @@ public class Game extends BasicGame {
 	private Player playerBall;
 	
 	private Vector<Player> catchers;
+	private int pBallEn;
 	
 	private States state;
 	private enum States {
@@ -83,7 +84,7 @@ public class Game extends BasicGame {
 			
 			int i = 0;
 			
-			graphics.drawString(playerBall.toString() + " EN : " + playerBall.en, 550, 50);
+			graphics.drawString(playerBall.toString() + " EN : " + pBallEn, 550, 50);
 			
 			for(Player pAttacker : catchers) {
 				
@@ -130,7 +131,7 @@ public class Game extends BasicGame {
 					
 					if(catchers.size() > 0) {
 					
-						attacker = catchers.firstElement();
+						attacker = catchers.remove(0);
 					}
 					else {
 						
@@ -141,9 +142,10 @@ public class Game extends BasicGame {
 				{
 					if(playerController.attackAnim(playerBall, attacker)) {
 						
-						if(playerController.attack(attacker, playerBall) == attacker) {
+						if((pBallEn -= playerController.attack(attacker.at, playerBall.en)) <= 0) {
 							
 							playerBall = attacker;
+							state = States.NORMAL;
 						}
 						
 						attacker = null;
@@ -165,6 +167,7 @@ public class Game extends BasicGame {
 				
 				if(!inPosition.contains(Boolean.FALSE)) {
 					
+					pBallEn = playerBall.en;
 					state = States.ATTACK; 
 				}
 					
@@ -177,6 +180,9 @@ public class Game extends BasicGame {
 				{
 					Player redPlayer = redTeam.getPlayer(i);
 					Player bluePlayer = blueTeam.getPlayer(i);
+					
+					redPlayer.increaseCRE();
+					bluePlayer.increaseCRE();
 					
 					if(redPlayer == playerBall) {
 						

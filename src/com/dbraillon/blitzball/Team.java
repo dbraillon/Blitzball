@@ -31,25 +31,25 @@ public class Team {
 		teamName = "Blue team";
 		
 		// shooter
-		Player leftShooter = new Player(132, 60, 10, 3, 3, 2, 10, 1, 250, 150, LF, this);
+		Player leftShooter = new Player(132, 60, 10, 3, 3, 2, 10, 1, 3, 250, 150, LF, this);
 		players.add(leftShooter);
 		
-		Player rightShooter = new Player(150, 60, 11, 3, 3, 2, 13, 1, 250, 450, RF, this);
+		Player rightShooter = new Player(150, 60, 11, 3, 3, 2, 13, 1, 3, 250, 450, RF, this);
 		players.add(rightShooter);
 		
 		// middle
-		Player middle = new Player(95, 60, 7, 5, 10, 5, 4, 1, 200, 300, MF, this);
+		Player middle = new Player(95, 60, 7, 5, 10, 5, 4, 1, 3, 200, 300, MF, this);
 		players.add(middle);
 		
 		// defender
-		Player leftDefender = new Player(100, 63, 7, 10, 7, 5, 1, 1, 100, 250, LD, this); 
+		Player leftDefender = new Player(100, 63, 7, 10, 7, 5, 1, 1, 3, 100, 250, LD, this); 
 		players.add(leftDefender);
 		
-		Player rightDefender = new Player(105, 60, 3, 10, 6, 2, 1, 1, 100, 350, RD, this);
+		Player rightDefender = new Player(105, 60, 3, 10, 6, 2, 1, 1, 3, 100, 350, RD, this);
 		players.add(rightDefender);
 		
 		// goalkeeper
-		Player goalkeeper = new Player(90, 54, 4, 2, 2, 4, 1, 5, 10, 300, GL, this); 
+		Player goalkeeper = new Player(90, 54, 4, 2, 2, 4, 1, 5, 3, 10, 300, GL, this); 
 		players.add(goalkeeper);
 	}
 	
@@ -58,25 +58,25 @@ public class Team {
 		teamName = "Red team";
 		
 		// shooter
-		Player leftShooter = new Player(329, 40, 16, 5, 5, 4, 10, 1, 350, 150, LF, this);
+		Player leftShooter = new Player(329, 40, 16, 5, 5, 4, 10, 1, 3, 350, 150, LF, this);
 		players.add(leftShooter);
 		
-		Player rightShooter = new Player(274, 40, 17, 5, 3, 2, 9, 1, 350, 450, RF, this);
+		Player rightShooter = new Player(274, 40, 17, 5, 3, 2, 9, 1, 3, 350, 450, RF, this);
 		players.add(rightShooter);
 		
 		// middle
-		Player middle = new Player(389, 40, 20, 7, 11, 5, 4, 1, 400, 300, MF, this);
+		Player middle = new Player(389, 40, 20, 7, 11, 5, 4, 1, 3, 400, 300, MF, this);
 		players.add(middle);
 		
 		// defender
-		Player leftDefender = new Player(230, 40, 14, 9, 7, 8, 1, 1, 500, 250, LD, this); 
+		Player leftDefender = new Player(230, 40, 14, 9, 7, 8, 1, 1, 3, 500, 250, LD, this); 
 		players.add(leftDefender);
 		
-		Player rightDefender = new Player(214, 40, 11, 12, 7, 4, 1, 1, 500, 350, RD, this);
+		Player rightDefender = new Player(214, 40, 11, 12, 7, 4, 1, 1, 3, 500, 350, RD, this);
 		players.add(rightDefender);
 		
 		// goalkeeper
-		Player goalkeeper = new Player(339, 40, 15, 2, 2, 7, 1, 9, 590, 300, GL, this); 
+		Player goalkeeper = new Player(339, 40, 15, 2, 2, 7, 1, 9, 3, 590, 300, GL, this); 
 		players.add(goalkeeper);
 	}
 	
