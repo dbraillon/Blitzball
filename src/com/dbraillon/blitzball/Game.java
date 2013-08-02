@@ -9,85 +9,122 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.dbraillon.blitzball.enumerations.State;
+import com.dbraillon.blitzball.enumerations.TeamPosition;
+
 public class Game extends BasicGame {
 
+	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 5;
+	private static final String TITLE = "Blitzball";
+	
 	private Stadium stadium;
 	private Team redTeam, blueTeam;
 	
-	private PlayerController playerController;
-	private Player playerBall;
+	private PlayerController pController;
+	private Player pBall;
 	
-	private Vector<Player> catchers;
-	private int pBallEn;
+	private State state;
 	
-	private States state;
-	private enum States {
-		NORMAL, PASS, SHOOT, CAUGHT, ATTACK
-	}
+	// utilisé dans l'état ATTAQUE
+	private Vector<Player> pAttackers;
+	private Player pAttacker;
+	private int tEndurance;
 	
-	private Player attacker;
 	
 	public Game(String title) {
 		super(title);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * First init then render and update
+	 */
+	
+	@Override
+	public void init(GameContainer arg0) throws SlickException {
+		
+		trace("Start init phase");
+		
+		trace("Create stadium");
+		stadium = new Stadium();
+		
+		trace("Create red team at right side");
+		redTeam = new Team("Red team", TeamPosition.RIGHT);
+		redTeam.makeRedTeam();
+		
+		trace("Create blue team at left side");
+		blueTeam = new Team("Blue team", TeamPosition.LEFT);
+		blueTeam.makeBlueTeam();
+		
+		trace("Create playerController");
+		pController = new PlayerController(stadium);
+		
+		trace("Give the ball to the blue team middle front");
+		pBall = blueTeam.getPlayer(Team.MF);
+		
+		trace("Set state to NORMAL");
+		set_State(State.NORMAL);
+	}
+	
 	@Override
 	public void render(GameContainer arg0, Graphics graphics) throws SlickException {
 		
+		trace("Start graphics render phase");
+		
+		trace("Fill white background");
 		graphics.setBackground(new Color(255, 255, 255));
 		
+		trace("Draw black stadium");
 		graphics.setColor(new Color(0, 0, 0));
 		graphics.drawOval(0, 0, stadium.get_totalRadius(), stadium.get_totalRadius());
 		
+		// players render
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
-			Player p = redTeam.getPlayer(i);
-			
-			if(playerBall != p) {
+			Player pRed = redTeam.getPlayer(i);
+			if(pRed != pBall) {
 				
+				trace("Draw " + pRed.toString() + " player with ball");
 				graphics.setColor(new Color(255, 0, 0));
 			}
 			else {
 				
+				trace("Draw " + pRed.toString() + " player without ball");
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
-			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
-					p.get_PlayerRadius(), p.get_PlayerRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_CaughtRadius() / 2, (float) p.get_yPosition() - p.get_CaughtRadius() / 2,
-					p.get_CaughtRadius(), p.get_CaughtRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-					p.get_reflexRadius(), p.get_reflexRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-					p.get_FollowRadius(), p.get_FollowRadius());
+			graphics.drawRect((float)pRed.get_xPosition(), (float)pRed.get_yPosition(), 
+					(float)pRed.get_PlayerRadius() / 2, (float)pRed.get_PlayerRadius() / 2);
 			
-			p = blueTeam.getPlayer(i);
 			
-			if(playerBall != p) {
+			Player pBlue = blueTeam.getPlayer(i);
+			if(pBlue != pBall) {
 				
+				trace("Draw " + pBlue.toString() + " player with ball");
 				graphics.setColor(new Color(0, 0, 255));
 			}
 			else {
 				
+				trace("Draw " + pBlue.toString() + " player without ball");
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
-			graphics.fillOval((float) p.get_xPosition() - p.get_PlayerRadius() / 2, (float) p.get_yPosition() - p.get_PlayerRadius() / 2,
-					p.get_PlayerRadius(), p.get_PlayerRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_reflexRadius() / 2, (float) p.get_yPosition() - p.get_reflexRadius() / 2,
-					p.get_reflexRadius(), p.get_reflexRadius());
-			graphics.drawOval((float) p.get_xPosition() - p.get_FollowRadius() / 2, (float) p.get_yPosition() - p.get_FollowRadius() / 2,
-					p.get_FollowRadius(), p.get_FollowRadius());
+			graphics.drawRect((float)pBlue.get_xPosition(), (float)pBlue.get_yPosition(), 
+					(float)pBlue.get_PlayerRadius() / 2, (float)pBlue.get_PlayerRadius() / 2);
 		}
 		
-		if(state == States.CAUGHT || state == States.ATTACK) {
+		// informations render
+		if(get_State() == State.CAUGHT || get_State() == State.ATTACK) {
 			
 			int i = 0;
 			
-			graphics.drawString(playerBall.toString() + " EN : " + pBallEn, 550, 50);
+			trace("Draw defender's information: " + pBall.toString());
+			graphics.drawString(pBall.toString() + " EN : " + tEndurance, 550, 50);
 			
-			for(Player pAttacker : catchers) {
+			// attackers render
+			for(Player pAttacker : pAttackers) {
 				
+				trace("Draw attacker's information: " + pAttacker.toString());
 				graphics.drawString(pAttacker.toString() + " AT : " + pAttacker.at, 550, 70 + 20 * i);
 				i++;
 			}
@@ -95,27 +132,11 @@ public class Game extends BasicGame {
 	}
 
 	@Override
-	public void init(GameContainer arg0) throws SlickException {
-		
-		stadium = new Stadium();
-		
-		redTeam = new Team("Red team", 1);
-		redTeam.makeRedTeam();
-		
-		blueTeam = new Team("Blue team", 0);
-		blueTeam.makeBlueTeam();
-		
-		playerController = new PlayerController(stadium);
-		
-		playerBall = blueTeam.getPlayer(Team.MF);
-		
-		state = States.NORMAL;
-	}
-	
-	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		
-		switch (state)
+		trace("Start updates phase");
+		
+		switch (get_State())
 		{
 			case SHOOT:
 			{
@@ -127,28 +148,28 @@ public class Game extends BasicGame {
 			}
 			case ATTACK:
 			{
-				if(attacker == null) {
+				if(pAttacker == null) {
 					
-					if(catchers.size() > 0) {
+					if(pAttackers.size() > 0) {
 					
-						attacker = catchers.remove(0);
+						pAttacker = pAttackers.remove(0);
 					}
 					else {
 						
-						state = States.NORMAL;
+						set_State(State.NORMAL);
 					}
 				}
 				else
 				{
-					if(playerController.attackAnim(playerBall, attacker)) {
+					if(pController.attackAnim(pBall, pAttacker)) {
 						
-						if((pBallEn -= playerController.attack(attacker.at, playerBall.en)) <= 0) {
+						if((tEndurance -= pController.attack(pAttacker.at, pBall.en)) <= 0) {
 							
-							playerBall = attacker;
-							state = States.NORMAL;
+							pBall = pAttacker;
+							set_State(State.NORMAL);
 						}
 						
-						attacker = null;
+						pAttacker = null;
 					}
 				}
 				
@@ -159,16 +180,16 @@ public class Game extends BasicGame {
 				int i = 0;
 				Vector<Boolean> inPosition = new Vector<Boolean>();
 				
-				for(Player pAttacker : catchers) {
+				for(Player pAttacker : pAttackers) {
 					
-					inPosition.add(playerController.catchPositioning(pAttacker, playerBall, i));
+					inPosition.add(pController.catchPositioning(pAttacker, pBall, i));
 					i++;
 				}
 				
 				if(!inPosition.contains(Boolean.FALSE)) {
 					
-					pBallEn = playerBall.en;
-					state = States.ATTACK; 
+					tEndurance = pBall.en;
+					set_State(State.ATTACK); 
 				}
 					
 				
@@ -184,12 +205,12 @@ public class Game extends BasicGame {
 					redPlayer.increaseCRE();
 					bluePlayer.increaseCRE();
 					
-					if(redPlayer == playerBall) {
+					if(redPlayer == pBall) {
 						
-						if((catchers = playerController.isCaught(playerBall, blueTeam)).size() > 0) {
+						if((pAttackers = pController.isCaught(pBall, blueTeam)).size() > 0) {
 							
-							state = States.CAUGHT;
-							System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+							set_State(State.CAUGHT);
+							System.out.println(pBall.toString() + " caught by " + pAttackers.size() + " player(s).");
 						}
 						
 						/*
@@ -200,12 +221,12 @@ public class Game extends BasicGame {
 						*/
 					}
 					
-					if(bluePlayer == playerBall) {
+					if(bluePlayer == pBall) {
 						
-						if((catchers = playerController.isCaught(playerBall, redTeam)).size() > 0) {
+						if((pAttackers = pController.isCaught(pBall, redTeam)).size() > 0) {
 							
-							state = States.CAUGHT;
-							System.out.println(playerBall.toString() + " caught by " + catchers.size() + " player(s).");
+							set_State(State.CAUGHT);
+							System.out.println(pBall.toString() + " caught by " + pAttackers.size() + " player(s).");
 						}
 						
 						/*
@@ -215,14 +236,14 @@ public class Game extends BasicGame {
 						*/
 					}
 					
-					if(!playerController.makeADecision(redPlayer, playerBall, redTeam, blueTeam)) {
+					if(!pController.makeADecision(redPlayer, pBall, redTeam, blueTeam)) {
 						
-						playerController.goForwardControl(redPlayer, redPlayer.sp / 10);
+						pController.goForwardControl(redPlayer, redPlayer.sp / 10);
 					}
 					
-					if(!playerController.makeADecision(bluePlayer, playerBall, blueTeam, redTeam)) {
+					if(!pController.makeADecision(bluePlayer, pBall, blueTeam, redTeam)) {
 						
-						playerController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
+						pController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
 					}
 					
 					/*playerController.goFollowPlayer(redPlayer, bluePlayer);
@@ -296,12 +317,37 @@ public class Game extends BasicGame {
 		 * 
 		 */	
 	}
+	
+	public State get_State() {
+		
+		return state;
+	}
 
+	// TODO: Decay the state change
+	public void set_State(State state) {
+		
+		this.state = state;
+	}
+	
+	
+	private static void trace(String message) {
+		
+		System.out.println("- " + System.currentTimeMillis() + ": " + message);
+	}
+	
+	/**
+	 * Entry of the application
+	 * 
+	 * @param args
+	 * @throws SlickException
+	 */
 	public static void main(String[] args) throws SlickException {
 		
-		AppGameContainer app = new AppGameContainer(new Game("Blitzball"));
-		app.setDisplayMode(800, 600, false);
-		app.setTargetFrameRate(5);
+		trace("Initialize AppGameContainer with a " + WIDTH + "x" + HEIGHT + " screen resolution");
+		
+		AppGameContainer app = new AppGameContainer(new Game(TITLE));
+		app.setDisplayMode(WIDTH, HEIGHT, false);
+		app.setTargetFrameRate(FRAME_RATE);
 		app.start();
 	}
 }

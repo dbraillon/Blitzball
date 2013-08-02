@@ -2,6 +2,8 @@ package com.dbraillon.blitzball;
 
 import java.util.Vector;
 
+import com.dbraillon.blitzball.enumerations.TeamPosition;
+
 public class Team {
 
 	public static final int PLAYER_COUNT = 6;
@@ -16,13 +18,13 @@ public class Team {
 	
 	private Vector<Player> players;
 	private String teamName;
-	private int position;
+	private TeamPosition tPosition;
 	
 	
-	public Team(String teamName, int position) {
+	public Team(String tName, TeamPosition tPosition) {
 		
 		players = new Vector<Player>();
-		set_Position(position);
+		set_tPosition(tPosition);
 	}
 	
 	
@@ -102,12 +104,12 @@ public class Team {
 	}
 
 
-	public int get_Position() {
-		return position;
+	public TeamPosition get_tPosition() {
+		return tPosition;
 	}
 
 
-	public void set_Position(int position) {
-		this.position = position;
+	public void set_tPosition(TeamPosition tPosition) {
+		this.tPosition = tPosition;
 	}
 }

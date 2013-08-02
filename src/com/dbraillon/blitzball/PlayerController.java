@@ -3,6 +3,8 @@ package com.dbraillon.blitzball;
 import java.util.Random;
 import java.util.Vector;
 
+import com.dbraillon.blitzball.enumerations.TeamPosition;
+
 public class PlayerController {
 
 	private Stadium _stadium;
@@ -227,10 +229,10 @@ public class PlayerController {
 						
 						System.out.println("GOAL !");
 						
-						if(tEnnemy.get_Position() == 0) tEnnemy.makeBlueTeam(); 
+						if(tEnnemy.get_tPosition() == TeamPosition.LEFT) tEnnemy.makeBlueTeam(); 
 						else tEnnemy.makeRedTeam();
 						
-						if(tFriend.get_Position() == 0) tFriend.makeBlueTeam(); 
+						if(tFriend.get_tPosition() == TeamPosition.LEFT) tFriend.makeBlueTeam(); 
 						else tFriend.makeRedTeam();
 					}
 					else {
@@ -279,7 +281,7 @@ public class PlayerController {
 		double posx = 0;
 		double posy = 0;
 		
-		if(playerBall.team.get_Position() == 0) {
+		if(playerBall.team.get_tPosition() == TeamPosition.LEFT) {
 			// la team de gauche donc les attaquants à droite
 			switch(i) {
 				case 0:
