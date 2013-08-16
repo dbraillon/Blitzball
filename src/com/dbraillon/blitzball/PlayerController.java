@@ -22,12 +22,12 @@ public class PlayerController {
 		
 		double sr = _stadium.get_radius() / 2;
 		
-		// position actuelle
+		// current position
 		double xc = player.get_xPosition();
 		double yc = player.get_yPosition();
 		double dc = Math.sqrt(Math.pow(xc - sr,  2) + Math.pow(yc - sr, 2));
 		
-		// position future
+		// future position
 		double xf = xc + player.get_xMove() * v;
 		double yf = yc + player.get_yMove() * v;
 		double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2));
@@ -41,81 +41,86 @@ public class PlayerController {
 		return b;
 	}
 	
-	public void goFollowPlayer(Player follower, double dx, double dy)
+	public void goToPoint(Player pFollower, double xPosition, double yPosition)
 	{
-		double rv = follower.sp / 10;
+		// follower's speed
+		double fSpeed = pFollower.sp / 10;
 		
-		double rx = follower.get_xPosition();
-		double ry = follower.get_yPosition();
+		// follower's position
+		double xFollower = pFollower.get_xPosition();
+		double yFollower = pFollower.get_yPosition();
 		
-		// troisième point
-		double tx = dx;
-		double ty = ry;
+		// third position with x of destination and y of follower
+		// need this point to calculate direction angle
+		double xThird = xPosition;
+		double yThird = yFollower;
 		
-		// calcul des distances
-		double rd = Math.sqrt(Math.pow(rx - dx, 2) + Math.pow(ry - dy, 2));
-		double rt = Math.sqrt(Math.pow(rx - tx, 2) + Math.pow(ry - ty, 2));
+		// follower - destination distance
+		// follower - third distance
+		double fdDistance = Math.sqrt(Math.pow(xFollower - xPosition, 2) + Math.pow(yFollower - yPosition, 2));
+		double ftDistance = Math.sqrt(Math.pow(xFollower - xThird, 2) + Math.pow(yFollower - yThird, 2));
 		
-		double angle = Math.toDegrees(Math.acos(rt/rd));
 		
-		if(rx > dx && ry > dy)
-		{
-			/// A en bas à droite de B (en haut à droite en vrai)
-			angle = 180 - angle;
-		}
-		else if(rx < dx && ry > dy)
-		{
-			/// A en bas à gauche de B (en haut à gauche en vrai)
-		}
-		else if(rx > dx && ry < dy)
-		{
-			// A en haut à droite de B (en bas à droite en vrai)
-			angle = 180 + angle;
-		}
-		else if(rx < dx && ry < dy)
-		{
-			// A en haut à gauche de B (en bas à gauche en vrai)
-			angle = 360 - angle;
-		}
-		else if(rx == dx && ry > dy)
-		{
-			// A en bas de B (en haut en vrai)
-			angle = 90;
-		}
-		else if(rx == dx && ry < dy)
-		{
-			// A en haut de B (en bas en vrai)
-			angle = 270;
-		}
-		else if(rx == dx && ry == dy)
-		{
-			// A sur B
-			rv = 0;
-		}
-		else if(rx < dx && ry == dy)
-		{
-			// A à gauche de B
-			angle = 0;
-		}
-		else if(rx > dx && ry == dy)
-		{
-			// A à droite de B
-			angle = 180;
-		}
-		
-		if(rd == 0) {
+		if(fdDistance < fSpeed) {
 			
-			follower.set_xMove(0);
-			follower.set_yMove(0);
+			pFollower.set_xPosition(xPosition);
+			pFollower.set_yPosition(yPosition);
 		}
 		else {
 			
-			follower.changeDirection(angle);
+			// angle the follower has to take to go at destination
+			double angle = Math.toDegrees(Math.acos(ftDistance/fdDistance));
+			
+			// A -> Follower
+			// B -> Destination
+			if(xFollower > xPosition && yFollower > yPosition)
+			{
+				/// A en bas à droite de B (en haut à droite en vrai)
+				angle = 180 - angle;
+			}
+			else if(xFollower < xPosition && yFollower > yPosition)
+			{
+				/// A en bas à gauche de B (en haut à gauche en vrai)
+			}
+			else if(xFollower > xPosition && yFollower < yPosition)
+			{
+				// A en haut à droite de B (en bas à droite en vrai)
+				angle = 180 + angle;
+			}
+			else if(xFollower < xPosition && yFollower < yPosition)
+			{
+				// A en haut à gauche de B (en bas à gauche en vrai)
+				angle = 360 - angle;
+			}
+			else if(xFollower == xPosition && yFollower > yPosition)
+			{
+				// A en bas de B (en haut en vrai)
+				angle = 90;
+			}
+			else if(xFollower == xPosition && yFollower < yPosition)
+			{
+				// A en haut de B (en bas en vrai)
+				angle = 270;
+			}
+			else if(xFollower == xPosition && yFollower == yPosition)
+			{
+				// A sur B
+				fSpeed = 0;
+			}
+			else if(xFollower < xPosition && yFollower == yPosition)
+			{
+				// A à gauche de B
+				angle = 0;
+			}
+			else if(xFollower > xPosition && yFollower == yPosition)
+			{
+				// A à droite de B
+				angle = 180;
+			}
+			
+			pFollower.changeDirection(angle);
+			goForwardControl(pFollower, fSpeed);
 		}
-		
-		if(rd < rv) rv = rd - (rd*10/100);
-		if(rv < 1) rv = 0;
-		goForwardControl(follower, rv);
 	}
 
 	public Vector<Player> isCaught(Player pBall, Team tEnnemy) {
@@ -175,21 +180,21 @@ public class PlayerController {
 		return en;
 	}
 	
-	public boolean attackAnim(Player pBall, Player pAttacker) {
+	public boolean attackAnim(Player pBall, Player pAttacker, double x, double y) {
 		
 		double bx = pBall.get_xPosition();
 		double by = pBall.get_yPosition();
-		double ax = pAttacker.get_xPosition();
-		double ay = pAttacker.get_yPosition();
+		double ax = x;
+		double ay = y;
 		
-		double dx = Math.abs(bx - ax) * 4;
-		double dy = Math.abs(by - ay) * 4;
+		double dx = Math.abs(bx - ax);
+		double dy = Math.abs(by - ay);
 		
 		double fx = (bx < ax) ? bx - dx : bx + dx;
-		double fy = (by < by) ? by + dy : by - dy;
+		double fy = (by < ay) ? by - dy : by + dy;
 		
 		
-		goFollowPlayer(pAttacker, fx, fy);
+		goToPoint(pAttacker, fx, fy);
 		
 		return isNear(pAttacker, fx, fy);
 	}
@@ -214,6 +219,7 @@ public class PlayerController {
 	public boolean makeADecision(Player pMe, Player pBall, Team tFriend, Team tEnnemy)
 	{
 		if(pMe.pos == Team.GL) return false;
+		if(!pMe.isAware()) return false;
 		
 		// qui a le ballon ?
 		if(pMe.team == pBall.team) {
@@ -241,14 +247,14 @@ public class PlayerController {
 					}
 				}
 				
-				goFollowPlayer(pMe, tEnnemy.getPlayer(Team.GL).get_xPosition(), tEnnemy.getPlayer(Team.GL).get_yPosition());
+				goToPoint(pMe, tEnnemy.getPlayer(Team.GL).get_xPosition(), tEnnemy.getPlayer(Team.GL).get_yPosition());
 			}
 			else {
 				
 				//pMe.set_xMove(pBall.get_xMove());
 				//pMe.set_yMove(pBall.get_yMove());
 				
-				goFollowPlayer(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
+				goToPoint(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
 			}
 		}
 		else {
@@ -256,12 +262,12 @@ public class PlayerController {
 			// quelqu'un de la team adverse !
 			if(isFollow(pMe, pBall)) {
 				
-				goFollowPlayer(pMe, pBall.get_xPosition(), pBall.get_yPosition());
+				goToPoint(pMe, pBall.get_xPosition(), pBall.get_yPosition());
 				return true;
 			}
 			else {
 				
-				goFollowPlayer(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
+				goToPoint(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
 				return true;
 			}
 		}
@@ -286,8 +292,7 @@ public class PlayerController {
 			switch(i) {
 				case 0:
 				{
-					goFollowPlayer(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
-					goForwardControl(pAttacker, pAttacker.sp / 10);
+					goToPoint(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
 					
 					return isNear(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
 				}
@@ -320,8 +325,8 @@ public class PlayerController {
 
 	public boolean isNear(Player p, double x, double y) {
 		
-		if(p.get_xPosition() >= x - 2 && p.get_xPosition() <= x + 2
-		&& p.get_yPosition() >= y - 2 && p.get_yPosition() <= y + 2) {
+		if(p.get_xPosition() >= x && p.get_xPosition() <= x
+		&& p.get_yPosition() >= y && p.get_yPosition() <= y) {
 			
 			return true;
 		}

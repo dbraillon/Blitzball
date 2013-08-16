@@ -1,5 +1,6 @@
 package com.dbraillon.blitzball;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import org.newdawn.slick.AppGameContainer;
@@ -14,8 +15,16 @@ import com.dbraillon.blitzball.enumerations.TeamPosition;
 
 public class Game extends BasicGame {
 
+	/**
+	 * - General configuration -
+	 * 
+	 * > screen height and width
+	 * > screen frame rate
+	 * > screen title
+	 */
 	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 5;
 	private static final String TITLE = "Blitzball";
+	
 	
 	private Stadium stadium;
 	private Team redTeam, blueTeam;
@@ -23,25 +32,37 @@ public class Game extends BasicGame {
 	private PlayerController pController;
 	private Player pBall;
 	
-	private State state;
+	private State gState;
 	
-	// utilisé dans l'état ATTAQUE
+	// used in ATTACK and CAUGHT state
 	private Vector<Player> pAttackers;
 	private Player pAttacker;
 	private int tEndurance;
+	private double xAttacker, yAttacker;
 	
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param title Screen title
+	 */
 	
 	public Game(String title) {
 		super(title);
 	}
 
+	
 	/*
 	 * (non-Javadoc)
-	 * First init then render and update
+	 * slick2d (in order) :
+	 * > init
+	 * > render
+	 * > update
 	 */
 	
 	@Override
-	public void init(GameContainer arg0) throws SlickException {
+	public void init(GameContainer gContainer) throws SlickException {
 		
 		trace("Start init phase");
 		
@@ -71,18 +92,21 @@ public class Game extends BasicGame {
 		
 		trace("Start graphics render phase");
 		
-		trace("Fill white background");
+		trace("Fill background with white");
 		graphics.setBackground(new Color(255, 255, 255));
 		
-		trace("Draw black stadium");
+		trace("Draw stadium in black");
 		graphics.setColor(new Color(0, 0, 0));
 		graphics.drawOval(0, 0, stadium.get_totalRadius(), stadium.get_totalRadius());
 		
-		// players render
+		trace("Start players rendering");
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
 			Player pRed = redTeam.getPlayer(i);
-			if(pRed != pBall) {
+			Player pBlue = blueTeam.getPlayer(i);
+			
+			// choose the color of red player rendering, depending if he holds the ball or not
+			if(pRed != pBall) { 
 				
 				trace("Draw " + pRed.toString() + " player with ball");
 				graphics.setColor(new Color(255, 0, 0));
@@ -93,11 +117,12 @@ public class Game extends BasicGame {
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
+			// draw the red player
 			graphics.drawRect((float)pRed.get_xPosition(), (float)pRed.get_yPosition(), 
 					(float)pRed.get_PlayerRadius() / 2, (float)pRed.get_PlayerRadius() / 2);
 			
 			
-			Player pBlue = blueTeam.getPlayer(i);
+			// choose the color of red player rendering, depending if he holds the ball or not
 			if(pBlue != pBall) {
 				
 				trace("Draw " + pBlue.toString() + " player with ball");
@@ -109,9 +134,13 @@ public class Game extends BasicGame {
 				graphics.setColor(new Color(0, 255, 0));
 			}
 			
+			// draw the blue player
 			graphics.drawRect((float)pBlue.get_xPosition(), (float)pBlue.get_yPosition(), 
 					(float)pBlue.get_PlayerRadius() / 2, (float)pBlue.get_PlayerRadius() / 2);
 		}
+		
+		
+		graphics.drawString("State: " + gState, 500, 20);
 		
 		// informations render
 		if(get_State() == State.CAUGHT || get_State() == State.ATTACK) {
@@ -119,13 +148,13 @@ public class Game extends BasicGame {
 			int i = 0;
 			
 			trace("Draw defender's information: " + pBall.toString());
-			graphics.drawString(pBall.toString() + " EN : " + tEndurance, 550, 50);
+			graphics.drawString(pBall.toString() + " EN : " + tEndurance, 500, 50);
 			
 			// attackers render
 			for(Player pAttacker : pAttackers) {
 				
 				trace("Draw attacker's information: " + pAttacker.toString());
-				graphics.drawString(pAttacker.toString() + " AT : " + pAttacker.at, 550, 70 + 20 * i);
+				graphics.drawString(pAttacker.toString() + " AT : " + pAttacker.at, 500, 70 + 20 * i);
 				i++;
 			}
 		}
@@ -153,6 +182,8 @@ public class Game extends BasicGame {
 					if(pAttackers.size() > 0) {
 					
 						pAttacker = pAttackers.remove(0);
+						xAttacker = pAttacker.get_xPosition();
+						yAttacker = pAttacker.get_yPosition();
 					}
 					else {
 						
@@ -161,12 +192,17 @@ public class Game extends BasicGame {
 				}
 				else
 				{
-					if(pController.attackAnim(pBall, pAttacker)) {
+					if(pController.attackAnim(pBall, pAttacker, xAttacker, yAttacker)) {
 						
 						if((tEndurance -= pController.attack(pAttacker.at, pBall.en)) <= 0) {
 							
 							pBall = pAttacker;
+							
 							set_State(State.NORMAL);
+						}
+						else {
+							
+							pAttacker.resetCRE();
 						}
 						
 						pAttacker = null;
@@ -188,11 +224,9 @@ public class Game extends BasicGame {
 				
 				if(!inPosition.contains(Boolean.FALSE)) {
 					
-					tEndurance = pBall.en;
 					set_State(State.ATTACK); 
 				}
 					
-				
 				break;
 			}
 			case NORMAL:
@@ -205,37 +239,6 @@ public class Game extends BasicGame {
 					redPlayer.increaseCRE();
 					bluePlayer.increaseCRE();
 					
-					if(redPlayer == pBall) {
-						
-						if((pAttackers = pController.isCaught(pBall, blueTeam)).size() > 0) {
-							
-							set_State(State.CAUGHT);
-							System.out.println(pBall.toString() + " caught by " + pAttackers.size() + " player(s).");
-						}
-						
-						/*
-						if(catchers.size() > 0) {
-							
-							playerBall = playerController.attack(catchers, playerBall);
-						}
-						*/
-					}
-					
-					if(bluePlayer == pBall) {
-						
-						if((pAttackers = pController.isCaught(pBall, redTeam)).size() > 0) {
-							
-							set_State(State.CAUGHT);
-							System.out.println(pBall.toString() + " caught by " + pAttackers.size() + " player(s).");
-						}
-						
-						/*
-						if(catchers.size() > 0) {
-							playerBall = playerController.attack(catchers, playerBall);
-						}
-						*/
-					}
-					
 					if(!pController.makeADecision(redPlayer, pBall, redTeam, blueTeam)) {
 						
 						pController.goForwardControl(redPlayer, redPlayer.sp / 10);
@@ -245,16 +248,21 @@ public class Game extends BasicGame {
 						
 						pController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
 					}
+				}
+				
+				if(pBall.team.get_tPosition() == TeamPosition.LEFT) {
 					
-					/*playerController.goFollowPlayer(redPlayer, bluePlayer);
+					if((pAttackers = pController.isCaught(pBall, redTeam)).size() > 0) {
+						
+						set_State(State.CAUGHT);
+					}
+				}
+				else if(pBall.team.get_tPosition() == TeamPosition.RIGHT) {
 					
-					if(!playerController.goForwardControl(bluePlayer)) {
+					if((pAttackers = pController.isCaught(pBall, blueTeam)).size() > 0) {
 						
-						Random r = new Random();
-						int direction = r.nextInt(360);
-						
-						bluePlayer.changeDirection(direction);
-					}*/
+						set_State(State.CAUGHT);
+					}
 				}
 				
 				break;
@@ -320,19 +328,51 @@ public class Game extends BasicGame {
 	
 	public State get_State() {
 		
-		return state;
+		return gState;
 	}
 
 	// TODO: Decay the state change
 	public void set_State(State state) {
 		
-		this.state = state;
+		trace("State changing from " + gState + " to " + state);
+		
+		switch (state) {
+			
+			case ATTACK:
+			{
+				break;
+			}
+			case CAUGHT:
+			{		
+				tEndurance = pBall.en;
+				System.out.println(pBall.toString() + " caught by " + pAttackers.size() + " player(s).");
+				break;
+			}			
+			case NORMAL:
+			{	
+				break;
+			}
+			case PASS:
+			{	
+				break;
+			}
+			case SHOOT:
+			{	
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+		
+		this.gState = state;
 	}
 	
 	
 	private static void trace(String message) {
 		
-		System.out.println("- " + System.currentTimeMillis() + ": " + message);
+		//System.out.println("- " + System.currentTimeMillis() + ": " + message);
 	}
 	
 	/**

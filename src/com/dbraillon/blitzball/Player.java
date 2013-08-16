@@ -83,19 +83,19 @@ public class Player {
 		switch(pos) {
 		
 			case 0:
-				return team.toString() + " : Attaquant gauche";
+				return team.toString() + ": Left Front";
 			case 1:
-				return team.toString() + " : Attaquant droit";
+				return team.toString() + ": Right Front";
 			case 2:
-				return team.toString() + " : Milieu";
+				return team.toString() + ": Middle Front";
 			case 3:
-				return team.toString() + " : Défenseur gauche";
+				return team.toString() + ": Left Defender";
 			case 4:
-				return team.toString() + " : Défenseur droit";
+				return team.toString() + ": Right Defender";
 			case 5:
-				return team.toString() + " : Gardien";
+				return team.toString() + ": Goal";
 			default:
-				return team.toString() + " : Personne";	
+				return team.toString() + ": Nobody";	
 		}
 	}
 	
@@ -197,5 +197,15 @@ public class Player {
 			
 			cre++;
 		}
+	}
+	
+	public void resetCRE() {
+		
+		cre = 0;
+	}
+	
+	public boolean isAware() {
+		
+		return cre >= re;
 	}
 }
