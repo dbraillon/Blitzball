@@ -22,7 +22,7 @@ public class Game extends BasicGame {
 	 * > screen frame rate
 	 * > screen title
 	 */
-	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 5;
+	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 30;
 	private static final String TITLE = "Blitzball";
 	
 	
@@ -194,7 +194,9 @@ public class Game extends BasicGame {
 				{
 					if(pController.attackAnim(pBall, pAttacker, xAttacker, yAttacker)) {
 						
-						if((tEndurance -= pController.attack(pAttacker.at, pBall.en)) <= 0) {
+						tEndurance = pController.attack(pAttacker.at, tEndurance);
+						
+						if(tEndurance <= 0) {
 							
 							pBall = pAttacker;
 							
@@ -241,12 +243,12 @@ public class Game extends BasicGame {
 					
 					if(!pController.makeADecision(redPlayer, pBall, redTeam, blueTeam)) {
 						
-						pController.goForwardControl(redPlayer, redPlayer.sp / 10);
+						//pController.goForwardControl(redPlayer, redPlayer.sp / 10);
 					}
 					
 					if(!pController.makeADecision(bluePlayer, pBall, blueTeam, redTeam)) {
 						
-						pController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
+						//pController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
 					}
 				}
 				

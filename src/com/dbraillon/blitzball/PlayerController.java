@@ -20,19 +20,19 @@ public class PlayerController {
 		
 		boolean b = true;
 		
-		double sr = _stadium.get_radius() / 2;
+		//double sr = _stadium.get_radius() / 2;
 		
 		// current position
-		double xc = player.get_xPosition();
-		double yc = player.get_yPosition();
-		double dc = Math.sqrt(Math.pow(xc - sr,  2) + Math.pow(yc - sr, 2));
+		//double xc = player.get_xPosition();
+		//double yc = player.get_yPosition();
+		//double dc = Math.sqrt(Math.pow(xc - sr,  2) + Math.pow(yc - sr, 2));
 		
 		// future position
-		double xf = xc + player.get_xMove() * v;
-		double yf = yc + player.get_yMove() * v;
-		double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2));
+		//double xf = xc + player.get_xMove() * v;
+		//double yf = yc + player.get_yMove() * v;
+		//double df = Math.sqrt(Math.pow(xf - sr, 2) + Math.pow(yf - sr, 2));
 		
-		v = (df >= sr) ? sr - dc : v;
+		//v = (df >= sr) ? sr - dc : v;
 		
 		if(v < 1) b = false;
 		
@@ -280,43 +280,105 @@ public class PlayerController {
 		double pbx = playerBall.get_xPosition();
 		double pby = playerBall.get_yPosition();
 		
-		double pax = pAttacker.get_xPosition();
-		double pay = pAttacker.get_yPosition();
-		
-		// calcul de la position de l'attaquant par rapport à l'attaqué
-		double posx = 0;
-		double posy = 0;
-		
 		if(playerBall.team.get_tPosition() == TeamPosition.LEFT) {
 			// la team de gauche donc les attaquants à droite
 			switch(i) {
 				case 0:
 				{
-					goToPoint(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
+					double xDestination = pbx + playerBall.get_CaughtRadius();
+					double yDestination = pby;
 					
-					return isNear(pAttacker, playerBall.get_xPosition() + playerBall.get_CaughtRadius() / 2, playerBall.get_yPosition());
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
 				}
 				case 1:
 				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 5;
+					double yDestination = pby - 10;
 					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
 				}
 				case 2:
 				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 5;
+					double yDestination = pby + 10;
 					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
 				}
 				case 3:
 				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 10;
+					double yDestination = pby - 15;
 					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
 				}
 				case 4:
 				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 10;
+					double yDestination = pby + 15;
 					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
 				}
 			}
 		} 
 		else {
 			// la team de droite donc les attaquants à gauche
-			
+			switch(i) {
+				case 0:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius();
+					double yDestination = pby;
+					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
+				}
+				case 1:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 5;
+					double yDestination = pby - 10;
+					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
+				}
+				case 2:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 5;
+					double yDestination = pby + 10;
+					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
+				}
+				case 3:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 10;
+					double yDestination = pby - 15;
+					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
+				}
+				case 4:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 10;
+					double yDestination = pby + 15;
+					
+					goToPoint(pAttacker, xDestination , yDestination);
+					
+					return isNear(pAttacker, xDestination, yDestination);
+				}
+			}
 		}
 		
 		return false;
