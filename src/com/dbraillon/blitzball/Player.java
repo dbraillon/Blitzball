@@ -1,11 +1,14 @@
 package com.dbraillon.blitzball;
 
+import com.dbraillon.blitzball.enumerations.Decision;
+import com.dbraillon.blitzball.enumerations.DecisionType;
+import com.dbraillon.blitzball.enumerations.Position;
+
 public class Player {
 
-	private double xOriginPosition;
-	private double yOriginPosition;
-	private double xPosition;
-	private double yPosition;
+	private double xOriginPosition, yOriginPosition;
+	private double xPosition, yPosition;
+	public double xDestination, yDestination;
 	
 	private int playerRadius; // cercle du joueur
 	private int caughtRadius; // si quelqu'un rentre dans ce cercle, il attrape le joueur
@@ -13,8 +16,7 @@ public class Player {
 	private int followRadius; // cercle de poursuite du joueur
 	
 	private double directionDegrees;
-	private double xMove;
-	private double yMove;
+	private double xMove, yMove;
 	
 	public int hp; // health point
 	public int sp; // speed
@@ -28,12 +30,14 @@ public class Player {
 	public int re; // reflex
 	public int cre; // counter reflex
 	
-	public int pos;
+	public Position position;
 	public Team team;
+	
+	public Decision lastDecision;
 	
 	
 	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca, int re,
-				  int xOriginPosition, int yOriginPosition, int pos, Team team) {
+				  int xOriginPosition, int yOriginPosition, Position pos, Team team) {
 		
 		this.set_PlayerRadius(10);
 		this.set_reflexRadius(100);
@@ -43,7 +47,7 @@ public class Player {
 		set_xOriginPosition(xOriginPosition);
 		set_yOriginPosition(yOriginPosition);
 		
-		this.pos = pos;
+		this.position = pos;
 		this.team = team;
 		
 		this.hp = hp;
@@ -56,8 +60,11 @@ public class Player {
 		this.ca = ca;
 		this.re = re;
 		this.cre = re;
+		
+		this.lastDecision = new Decision(DecisionType.NOTHING);
 	}
 
+	
 	public void changeDirection(double directionDegrees) {
 		
 		this.set_DirectionDegrees(directionDegrees);
@@ -65,10 +72,95 @@ public class Player {
 		set_yMove(0 - Math.sin(Math.toRadians(directionDegrees)));
 	}
 	
-	public void goForward(double velocity) {
+	public void turnToDestination() {
 		
-		set_xPosition(get_xPosition() + velocity * get_xMove());
-		set_yPosition(get_yPosition() + velocity * get_yMove());
+		// third position with x of destination and y of follower
+		// need this point to calculate direction angle
+		double xThird = xDestination;
+		double yThird = yPosition;
+		
+		// follower - destination distance
+		// follower - third distance
+		double fdDistance = Math.sqrt(Math.pow(xPosition - xDestination, 2) + Math.pow(yPosition - yDestination, 2));
+		double ftDistance = Math.sqrt(Math.pow(xPosition - xThird, 2) + Math.pow(yPosition - yThird, 2));
+		
+		// angle the follower has to take to go at destination
+		double angle = Math.toDegrees(Math.acos(ftDistance/fdDistance));
+		
+		// A -> Follower
+		// B -> Destination
+		if(xPosition > xDestination && yPosition > yDestination)
+		{
+			/// A en bas à droite de B (en haut à droite en vrai)
+			angle = 180 - angle;
+		}
+		else if(xPosition < xDestination && yPosition > yDestination)
+		{
+			/// A en bas à gauche de B (en haut à gauche en vrai)
+		}
+		else if(xPosition > xDestination && yPosition < yDestination)
+		{
+			// A en haut à droite de B (en bas à droite en vrai)
+			angle = 180 + angle;
+		}
+		else if(xPosition < xDestination && yPosition < yDestination)
+		{
+			// A en haut à gauche de B (en bas à gauche en vrai)
+			angle = 360 - angle;
+		}
+		else if(xPosition == xDestination && yPosition > yDestination)
+		{
+			// A en bas de B (en haut en vrai)
+			angle = 90;
+		}
+		else if(xPosition == xDestination && yPosition < yDestination)
+		{
+			// A en haut de B (en bas en vrai)
+			angle = 270;
+		}
+		else if(xPosition == xDestination && yPosition == yDestination)
+		{
+			// A sur B
+		}
+		else if(xPosition < xDestination && yPosition == yDestination)
+		{
+			// A à gauche de B
+			angle = 0;
+		}
+		else if(xPosition > xDestination && yPosition == yDestination)
+		{
+			// A à droite de B
+			angle = 180;
+		}
+		
+		changeDirection(angle);
+	}
+
+	public void turnToDestination(double xDestination, double yDestination) {
+		
+		this.xDestination = xDestination;
+		this.yDestination = yDestination;
+		
+		turnToDestination();
+	}
+	
+	public void goForward() {
+		
+		double velocity = sp / 10;
+		
+		// follower - destination distance
+		// follower - third distance
+		double fdDistance = Math.sqrt(Math.pow(xPosition - xDestination, 2) + Math.pow(yPosition - yDestination, 2));
+		
+		
+		if(fdDistance < velocity) {
+			
+			setPosition(xDestination, yDestination);
+		}
+		else {
+			
+			setPosition(xPosition + velocity * xMove, yPosition + velocity * yMove);
+		}
 	}
 	
 	public void setPosition(double xPosition, double yPosition) {
@@ -77,27 +169,60 @@ public class Player {
 		this.yPosition = yPosition;
 	}
 	
+	
+	public void increaseCRE() {
+		
+		if(cre < re) {
+			
+			cre++;
+		}
+	}
+	
+	public void resetCRE() {
+		
+		cre = 0;
+	}
+	
+	public boolean isAware() {
+		
+		return cre >= re;
+	}
+	
+	public boolean isNear(Player p) {
+		
+		double d = Math.sqrt(Math.pow(xPosition - p.get_xPosition(), 2) + Math.pow(yPosition - p.get_yPosition(), 2));
+		
+		if(d < followRadius / 2) {
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	@Override
 	public String toString() {
 		
-		switch(pos) {
+		switch(position) {
 		
-			case 0:
+			case LF:
 				return team.toString() + ": Left Front";
-			case 1:
+			case RF:
 				return team.toString() + ": Right Front";
-			case 2:
+			case MF:
 				return team.toString() + ": Middle Front";
-			case 3:
+			case LD:
 				return team.toString() + ": Left Defender";
-			case 4:
+			case RD:
 				return team.toString() + ": Right Defender";
-			case 5:
+			case GL:
 				return team.toString() + ": Goal";
 			default:
 				return team.toString() + ": Nobody";	
 		}
 	}
+	
 	
 	public double get_xPosition() {
 		return xPosition;
@@ -191,21 +316,4 @@ public class Player {
 		this.caughtRadius = caughtRadius;
 	}
 
-	public void increaseCRE() {
-		
-		if(cre < re) {
-			
-			cre++;
-		}
-	}
-	
-	public void resetCRE() {
-		
-		cre = 0;
-	}
-	
-	public boolean isAware() {
-		
-		return cre >= re;
-	}
 }

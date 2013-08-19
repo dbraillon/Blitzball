@@ -216,63 +216,9 @@ public class PlayerController {
 		return false;
 	}
 	
-	public boolean makeADecision(Player pMe, Player pBall, Team tFriend, Team tEnnemy)
+	public void makeADecision(Player pMe, Player pBall, Team tFriend, Team tEnnemy)
 	{
-		if(pMe.pos == Team.GL) return false;
-		if(!pMe.isAware()) return false;
 		
-		// qui a le ballon ?
-		if(pMe.team == pBall.team) {
-			
-			// quelqu'un de ma team ! mais qui ?
-			if(pMe == pBall) {
-				
-				// c'est moi !
-				double d = Math.sqrt(Math.pow(tEnnemy.getPlayer(Team.GL).get_xPosition() - pBall.get_xPosition(), 2) + Math.pow(tEnnemy.getPlayer(Team.GL).get_yPosition() - pBall.get_yPosition(), 2));
-				if(d/20 < pMe.sh * 70 / 100) {
-					
-					if(shoot(pBall, tEnnemy.getPlayer(Team.GL))) {
-						
-						System.out.println("GOAL !");
-						
-						if(tEnnemy.get_tPosition() == TeamPosition.LEFT) tEnnemy.makeBlueTeam(); 
-						else tEnnemy.makeRedTeam();
-						
-						if(tFriend.get_tPosition() == TeamPosition.LEFT) tFriend.makeBlueTeam(); 
-						else tFriend.makeRedTeam();
-					}
-					else {
-						
-						System.out.println("MISS !");
-					}
-				}
-				
-				goToPoint(pMe, tEnnemy.getPlayer(Team.GL).get_xPosition(), tEnnemy.getPlayer(Team.GL).get_yPosition());
-			}
-			else {
-				
-				//pMe.set_xMove(pBall.get_xMove());
-				//pMe.set_yMove(pBall.get_yMove());
-				
-				goToPoint(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
-			}
-		}
-		else {
-			
-			// quelqu'un de la team adverse !
-			if(isFollow(pMe, pBall)) {
-				
-				goToPoint(pMe, pBall.get_xPosition(), pBall.get_yPosition());
-				return true;
-			}
-			else {
-				
-				goToPoint(pMe, pMe.get_xOriginPosition(), pMe.get_yOriginPosition());
-				return true;
-			}
-		}
-		
-		return false;
 	}
 
 	public boolean catchPositioning(Player pAttacker, Player playerBall, int i) {

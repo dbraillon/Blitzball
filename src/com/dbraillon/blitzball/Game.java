@@ -1,6 +1,5 @@
 package com.dbraillon.blitzball;
 
-import java.io.IOException;
 import java.util.Vector;
 
 import org.newdawn.slick.AppGameContainer;
@@ -60,7 +59,7 @@ public class Game extends BasicGame {
 	 * > render
 	 * > update
 	 */
-	
+	AI ia;
 	@Override
 	public void init(GameContainer gContainer) throws SlickException {
 		
@@ -82,6 +81,7 @@ public class Game extends BasicGame {
 		
 		trace("Give the ball to the blue team middle front");
 		pBall = blueTeam.getPlayer(Team.MF);
+		ia = new AI(pBall, blueTeam, redTeam, stadium);
 		
 		trace("Set state to NORMAL");
 		set_State(State.NORMAL);
@@ -241,15 +241,8 @@ public class Game extends BasicGame {
 					redPlayer.increaseCRE();
 					bluePlayer.increaseCRE();
 					
-					if(!pController.makeADecision(redPlayer, pBall, redTeam, blueTeam)) {
-						
-						//pController.goForwardControl(redPlayer, redPlayer.sp / 10);
-					}
-					
-					if(!pController.makeADecision(bluePlayer, pBall, blueTeam, redTeam)) {
-						
-						//pController.goForwardControl(bluePlayer, bluePlayer.sp / 10);
-					}
+					pController.makeADecision(redPlayer, pBall, redTeam, blueTeam);
+					pController.makeADecision(bluePlayer, pBall, blueTeam, redTeam);
 				}
 				
 				if(pBall.team.get_tPosition() == TeamPosition.LEFT) {
