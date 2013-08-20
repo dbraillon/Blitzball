@@ -9,8 +9,9 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.dbraillon.blitzball.enumerations.Position;
 import com.dbraillon.blitzball.enumerations.State;
-import com.dbraillon.blitzball.enumerations.TeamPosition;
+import com.dbraillon.blitzball.enumerations.PositionTeam;
 
 public class Game extends BasicGame {
 
@@ -21,14 +22,13 @@ public class Game extends BasicGame {
 	 * > screen frame rate
 	 * > screen title
 	 */
-	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 30;
+	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 10;
 	private static final String TITLE = "Blitzball";
 	
 	
 	private Stadium stadium;
 	private Team redTeam, blueTeam;
 	
-	private PlayerController pController;
 	private Player pBall;
 	
 	private State gState;
@@ -69,19 +69,15 @@ public class Game extends BasicGame {
 		stadium = new Stadium();
 		
 		trace("Create red team at right side");
-		redTeam = new Team("Red team", TeamPosition.RIGHT);
+		redTeam = new Team("Red team", PositionTeam.RIGHT);
 		redTeam.makeRedTeam();
 		
 		trace("Create blue team at left side");
-		blueTeam = new Team("Blue team", TeamPosition.LEFT);
+		blueTeam = new Team("Blue team", PositionTeam.LEFT);
 		blueTeam.makeBlueTeam();
 		
-		trace("Create playerController");
-		pController = new PlayerController(stadium);
-		
 		trace("Give the ball to the blue team middle front");
-		pBall = blueTeam.getPlayer(Team.MF);
-		ia = new AI(pBall, blueTeam, redTeam, stadium);
+		pBall = blueTeam.getPlayer(Position.MF);
 		
 		trace("Set state to NORMAL");
 		set_State(State.NORMAL);
@@ -192,13 +188,15 @@ public class Game extends BasicGame {
 				}
 				else
 				{
-					if(pController.attackAnim(pBall, pAttacker, xAttacker, yAttacker)) {
+					if(pAttacker.attackAnim(pBall, xAttacker, yAttacker)) {
 						
-						tEndurance = pController.attack(pAttacker.at, tEndurance);
+						tEndurance = pAttacker.attack(tEndurance);
 						
 						if(tEndurance <= 0) {
 							
+							pBall.resetCRE();
 							pBall = pAttacker;
+							pBall.increaseMaxCRE();
 							
 							set_State(State.NORMAL);
 						}
@@ -220,7 +218,7 @@ public class Game extends BasicGame {
 				
 				for(Player pAttacker : pAttackers) {
 					
-					inPosition.add(pController.catchPositioning(pAttacker, pBall, i));
+					inPosition.add(pAttacker.catchPositioning(pBall, i));
 					i++;
 				}
 				
@@ -241,20 +239,20 @@ public class Game extends BasicGame {
 					redPlayer.increaseCRE();
 					bluePlayer.increaseCRE();
 					
-					pController.makeADecision(redPlayer, pBall, redTeam, blueTeam);
-					pController.makeADecision(bluePlayer, pBall, blueTeam, redTeam);
+					AI.play(redPlayer, pBall, redTeam, blueTeam, stadium);
+					AI.play(bluePlayer, pBall, blueTeam, redTeam, stadium);
 				}
 				
-				if(pBall.team.get_tPosition() == TeamPosition.LEFT) {
+				if(pBall.team.get_tPosition() == PositionTeam.LEFT) {
 					
-					if((pAttackers = pController.isCaught(pBall, redTeam)).size() > 0) {
+					if((pAttackers = pBall.isCaught(redTeam)).size() > 0) {
 						
 						set_State(State.CAUGHT);
 					}
 				}
-				else if(pBall.team.get_tPosition() == TeamPosition.RIGHT) {
+				else if(pBall.team.get_tPosition() == PositionTeam.RIGHT) {
 					
-					if((pAttackers = pController.isCaught(pBall, blueTeam)).size() > 0) {
+					if((pAttackers = pBall.isCaught(blueTeam)).size() > 0) {
 						
 						set_State(State.CAUGHT);
 					}

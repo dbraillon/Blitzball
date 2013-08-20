@@ -1,6 +1,6 @@
 package com.dbraillon.blitzball.enumerations;
 
-public enum TeamPosition {
+public enum PositionTeam {
 
 	LEFT, RIGHT;
 	

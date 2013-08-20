@@ -1,8 +1,12 @@
 package com.dbraillon.blitzball;
 
+import java.util.Random;
+import java.util.Vector;
+
 import com.dbraillon.blitzball.enumerations.Decision;
 import com.dbraillon.blitzball.enumerations.DecisionType;
 import com.dbraillon.blitzball.enumerations.Position;
+import com.dbraillon.blitzball.enumerations.PositionTeam;
 
 public class Player {
 
@@ -170,6 +174,218 @@ public class Player {
 	}
 	
 	
+	public Vector<Player> isCaught(Team tEnnemy) {
+
+		Vector<Player> cEnnemy = new Vector<Player>(); // ennemy that caught pBall
+		Vector<Player> rEnnemy = new Vector<Player>(); // ennemy that is in reflex radius and will help if someone caught pBall
+		
+		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
+			
+			Player c = tEnnemy.getPlayer(i);
+			if(c.position != Position.GL && c.isAware()) {
+			
+				double d = Math.sqrt(Math.pow(c.get_xPosition() - xPosition, 2) + Math.pow(c.get_yPosition() - yPosition, 2));
+				if(d < c.get_CaughtRadius() / 2) {
+					
+					cEnnemy.add(c);
+				}
+				else if(d < c.get_reflexRadius() / 2)
+				{
+					rEnnemy.add(c);
+				}
+			}
+		}
+		
+		// if someone caught pBall all player in reflex radius help him
+		if(cEnnemy.size() > 0) {
+			
+			cEnnemy.addAll(rEnnemy);
+		}
+		
+		return cEnnemy;
+	}
+
+	public boolean catchPositioning(Player playerBall, int i) {
+		
+		double pbx = playerBall.get_xPosition();
+		double pby = playerBall.get_yPosition();
+		
+		if(playerBall.team.get_tPosition() == PositionTeam.LEFT) {
+			// la team de gauche donc les attaquants à droite
+			switch(i) {
+				case 0:
+				{
+					double xDestination = pbx + playerBall.get_CaughtRadius();
+					double yDestination = pby;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 1:
+				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 5;
+					double yDestination = pby - 10;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 2:
+				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 5;
+					double yDestination = pby + 10;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 3:
+				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 10;
+					double yDestination = pby - 15;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 4:
+				{
+					double xDestination = pbx + playerBall.get_CaughtRadius() - 10;
+					double yDestination = pby + 15;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+			}
+		} 
+		else {
+			// la team de droite donc les attaquants à gauche
+			switch(i) {
+				case 0:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius();
+					double yDestination = pby;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 1:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 5;
+					double yDestination = pby - 10;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 2:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 5;
+					double yDestination = pby + 10;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 3:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 10;
+					double yDestination = pby - 15;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+				case 4:
+				{
+					double xDestination = pbx - playerBall.get_CaughtRadius() + 10;
+					double yDestination = pby + 15;
+					
+					turnToDestination(xDestination, yDestination);
+					goForward();
+					
+					return isNear(xDestination, yDestination);
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public int attack(int en) {
+		
+		System.out.println("AT: " + at + ", EN: " + en);
+		
+		Random r = new Random();
+		double percant = r.nextDouble() + 0.5;
+		
+		int at = (int) Math.round(this.at * percant);
+		en -= at;
+		
+		System.out.println("AT: " + at + ", EN: " + en);
+		
+		return en;
+	}
+	
+	public boolean attackAnim(Player pBall, double x, double y) {
+		
+		double bx = pBall.get_xPosition();
+		double by = pBall.get_yPosition();
+		double ax = x;
+		double ay = y;
+		
+		double dx = Math.abs(bx - ax);
+		double dy = Math.abs(by - ay);
+		
+		double fx = (bx < ax) ? bx - dx : bx + dx;
+		double fy = (by < ay) ? by - dy : by + dy;
+		
+		turnToDestination(fx, fy);
+		goForward();
+		
+		return isNear(fx, fy);
+	}
+	
+	public boolean isNear(double x, double y) {
+		
+		if(xPosition >= x && xPosition <= x
+		&& yPosition >= y && yPosition <= y) {
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean shoot(Player goalie) {
+		
+		double d = Math.sqrt(Math.pow(goalie.get_xPosition() - xPosition, 2) + Math.pow(goalie.get_yPosition() - yPosition, 2));
+		
+		d = d / 20;
+		Random r = new Random();
+		double percant = r.nextDouble() + 0.5;
+		long ca = Math.round(goalie.ca * percant);
+		
+		sh -= d;
+		
+		if(sh > ca) return true;
+		
+		return false;
+	}
+	
+	
 	public void increaseCRE() {
 		
 		if(cre < re) {
@@ -178,6 +394,11 @@ public class Player {
 		}
 	}
 	
+	public void increaseMaxCRE() {
+		
+		cre = re;
+	}
+
 	public void resetCRE() {
 		
 		cre = 0;

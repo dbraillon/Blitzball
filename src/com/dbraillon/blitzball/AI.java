@@ -8,11 +8,17 @@ public class AI {
 
 	public static void play(Player mPlayer, Player bPlayer, Team mTeam, Team oTeam, Stadium stadium) {
 		
+		mPlayer.increaseCRE();
+		
 		Decision decision = makeADecision(mPlayer, bPlayer, mTeam, oTeam, stadium);
 		
 		if(decision.decisionType == DecisionType.CONTINUE) {
 			
 			decision = mPlayer.lastDecision;
+		}
+		else {
+			
+			mPlayer.resetCRE();
 		}
 		
 		switch(decision.decisionType) {
@@ -41,6 +47,8 @@ public class AI {
 			default:
 				break;
 		}
+		
+		mPlayer.lastDecision = decision;
 	}
 	
 	public static Decision makeADecision(Player mPlayer, Player bPlayer, Team mTeam, Team oTeam, Stadium stadium) {

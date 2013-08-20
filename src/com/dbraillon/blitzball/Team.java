@@ -4,7 +4,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Vector;
 
 import com.dbraillon.blitzball.enumerations.Position;
-import com.dbraillon.blitzball.enumerations.TeamPosition;
+import com.dbraillon.blitzball.enumerations.PositionTeam;
 
 public class Team {
 
@@ -12,10 +12,10 @@ public class Team {
 	
 	private Vector<SimpleEntry<Position, Player>> players;
 	private String teamName;
-	private TeamPosition tPosition;
+	private PositionTeam tPosition;
 	
 	
-	public Team(String tName, TeamPosition tPosition) {
+	public Team(String tName, PositionTeam tPosition) {
 		
 		players = new Vector<SimpleEntry<Position, Player>>();
 		set_tPosition(tPosition);
@@ -36,7 +36,7 @@ public class Team {
 		players.add(new SimpleEntry<Position, Player>(Position.RF, rightShooter));
 		players.add(new SimpleEntry<Position, Player>(Position.MF, middle));
 		players.add(new SimpleEntry<Position, Player>(Position.LD, leftDefender));
-		players.add(new SimpleEntry<Position, Player>(Position.LD, rightDefender));
+		players.add(new SimpleEntry<Position, Player>(Position.RD, rightDefender));
 		players.add(new SimpleEntry<Position, Player>(Position.GL, goalkeeper));
 	}
 	public void makeRedTeam() {
@@ -70,7 +70,10 @@ public class Team {
 		
 		return null;
 	}
-
+	public Player getPlayer(int i) {
+		
+		return players.get(i).getValue();
+	}
 	
 	@Override
 	public String toString() {
@@ -87,11 +90,11 @@ public class Team {
 		this.teamName = teamName;
 	}
 
-	public TeamPosition get_tPosition() {
+	public PositionTeam get_tPosition() {
 		return tPosition;
 	}
 
-	public void set_tPosition(TeamPosition tPosition) {
+	public void set_tPosition(PositionTeam tPosition) {
 		this.tPosition = tPosition;
 	}
 }
