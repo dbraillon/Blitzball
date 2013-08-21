@@ -16,7 +16,7 @@ public class AI {
 			
 			decision = mPlayer.lastDecision;
 		}
-		else {
+		else if(decision.decisionType != DecisionType.NOTHING) {
 			
 			mPlayer.resetCRE();
 		}

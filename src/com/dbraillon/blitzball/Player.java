@@ -182,7 +182,7 @@ public class Player {
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
 			
 			Player c = tEnnemy.getPlayer(i);
-			if(c.position != Position.GL && c.isAware()) {
+			if(c.position != Position.GL) {
 			
 				double d = Math.sqrt(Math.pow(c.get_xPosition() - xPosition, 2) + Math.pow(c.get_yPosition() - yPosition, 2));
 				if(d < c.get_CaughtRadius() / 2) {

@@ -87,7 +87,7 @@ public class Game extends BasicGame {
 	public void render(GameContainer arg0, Graphics graphics) throws SlickException {
 		
 		trace("Start graphics render phase");
-		
+		System.out.println("pBall: " + pBall.cre);
 		trace("Fill background with white");
 		graphics.setBackground(new Color(255, 255, 255));
 		
@@ -235,9 +235,6 @@ public class Game extends BasicGame {
 				{
 					Player redPlayer = redTeam.getPlayer(i);
 					Player bluePlayer = blueTeam.getPlayer(i);
-					
-					redPlayer.increaseCRE();
-					bluePlayer.increaseCRE();
 					
 					AI.play(redPlayer, pBall, redTeam, blueTeam, stadium);
 					AI.play(bluePlayer, pBall, blueTeam, redTeam, stadium);
