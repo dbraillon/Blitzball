@@ -2,13 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/Davy/Documents/Lib/Java/lwjgl-2.8.5/jar/jinput.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Davy/Documents/Lib/Java/lwjgl-2.8.5/jar/lwjgl.jar">
+	<classpathentry kind="lib" path="C:/Users/d.braillon/Documents/GitHub/Blitzball/libs/jinput.jar"/>
+	<classpathentry kind="lib" path="C:/Users/d.braillon/Documents/GitHub/Blitzball/libs/lwjgl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Davy/Documents/Lib/Java/lwjgl-2.8.5/native/windows"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/d.braillon/Documents/GitHub/Blitzball/libs/windows"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Davy/Documents/Lib/Java/lwjgl-2.8.5/jar/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Davy/Documents/Lib/Java/slick2d/slick.jar"/>
+	<classpathentry kind="lib" path="C:/Users/d.braillon/Documents/GitHub/Blitzball/libs/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="C:/Users/d.braillon/Documents/GitHub/Blitzball/libs/slick.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
