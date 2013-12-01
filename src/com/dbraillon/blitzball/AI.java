@@ -2,23 +2,28 @@ package com.dbraillon.blitzball;
 
 import com.dbraillon.blitzball.enumerations.Decision;
 import com.dbraillon.blitzball.enumerations.DecisionType;
-import com.dbraillon.blitzball.enumerations.Position;
+import com.dbraillon.blitzball.enumerations.PlayerPosition;
+import com.dbraillon.blitzball.models.Player;
+import com.dbraillon.blitzball.models.Stadium;
+import com.dbraillon.blitzball.models.Team;
+import com.dbraillon.blitzball.tools.Point;
 
 public class AI {
 
 	public static void play(Player mPlayer, Player bPlayer, Team mTeam, Team oTeam, Stadium stadium) {
 		
-		mPlayer.increaseCRE();
+		mPlayer.getReflex().increase();
 		
 		Decision decision = makeADecision(mPlayer, bPlayer, mTeam, oTeam, stadium);
+		System.out.println(mPlayer.toString() + ":" + decision.toString());
 		
 		if(decision.decisionType == DecisionType.CONTINUE) {
 			
-			decision = mPlayer.lastDecision;
+			decision = mPlayer.getLastDecision();
 		}
 		else if(decision.decisionType != DecisionType.NOTHING) {
 			
-			mPlayer.resetCRE();
+			mPlayer.getReflex().reset();
 		}
 		
 		switch(decision.decisionType) {
@@ -28,13 +33,13 @@ public class AI {
 				
 			case FOLLOW:
 				
-				mPlayer.turnToDestination(decision.player.get_xPosition(), decision.player.get_yPosition());
+				mPlayer.turnToDestination(decision.player.getCurrentPosition());
 				mPlayer.goForward();
 				break;
 				
 			case MOVE:
 				
-				mPlayer.turnToDestination(decision.x, decision.y);
+				mPlayer.turnToDestination(new Point(decision.x, decision.y));
 				mPlayer.goForward();
 				break;
 				
@@ -48,21 +53,21 @@ public class AI {
 				break;
 		}
 		
-		mPlayer.lastDecision = decision;
+		mPlayer.setLastDecision(decision);
 	}
 	
 	public static Decision makeADecision(Player mPlayer, Player bPlayer, Team mTeam, Team oTeam, Stadium stadium) {
 		
 		// le goal ne fait rien
-		if(mPlayer.position == Position.GL) 
+		if(mPlayer.getPosition() == PlayerPosition.GL) 
 			return new Decision(DecisionType.NOTHING);
 		
 		// si j'ai pas mon reflex je prend pas de décision
-		if(!mPlayer.isAware()) 
+		if(!mPlayer.getReflex().isAware()) 
 			return new Decision(DecisionType.CONTINUE);
 		
 		// qui a le ballon ?
-		if(mPlayer.team == bPlayer.team) {
+		if(mPlayer.getTeam() == bPlayer.getTeam()) {
 			
 			// quelqu'un de ma team ! mais qui ?
 			if(mPlayer == bPlayer) {
@@ -70,8 +75,7 @@ public class AI {
 				// c'est moi !
 				
 				// ça vaut le coup que je tire ?
-				double d = Math.sqrt(Math.pow(oTeam.getPlayer(Position.GL).get_xPosition() - mPlayer.get_xPosition(), 2) 
-									+ Math.pow(oTeam.getPlayer(Position.GL).get_yPosition() - mPlayer.get_yPosition(), 2));
+				double d = Point.distance(oTeam.getPlayer(PlayerPosition.GL).getCurrentPosition(), mPlayer.getCurrentPosition());
 				
 				System.out.println("" + d);
 				
@@ -96,28 +100,28 @@ public class AI {
 				
 				// dans tous les cas j'avance en direction des cages adverses
 				return new Decision(DecisionType.MOVE, 
-									oTeam.getPlayer(Position.GL).get_xPosition(), 
-									oTeam.getPlayer(Position.GL).get_yPosition());
+									oTeam.getPlayer(PlayerPosition.GL).getCurrentPosition().getX(), 
+									oTeam.getPlayer(PlayerPosition.GL).getCurrentPosition().getY());
 			}
 			else {
 				
 				return new Decision(DecisionType.MOVE, 
-									mPlayer.get_xOriginPosition(), 
-									mPlayer.get_yOriginPosition());
+									mPlayer.getOriginPosition().getX(), 
+									mPlayer.getOriginPosition().getY());
 			}
 		}
 		else {
 			
 			// quelqu'un de la team adverse !
-			if(mPlayer.isNear(bPlayer)) {
+			if(mPlayer.canFollow(bPlayer)) {
 				
 				return new Decision(DecisionType.FOLLOW, bPlayer);
 			}
 			else {
 				
 				return new Decision(DecisionType.MOVE, 
-									mPlayer.get_xOriginPosition(), 
-									mPlayer.get_yOriginPosition());
+						mPlayer.getOriginPosition().getX(), 
+						mPlayer.getOriginPosition().getY());
 			}
 		}
 	}

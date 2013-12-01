@@ -1,6 +1,6 @@
 package com.dbraillon.blitzball.enumerations;
 
-import com.dbraillon.blitzball.Player;
+import com.dbraillon.blitzball.models.Player;
 
 public class Decision {
 
@@ -24,5 +24,12 @@ public class Decision {
 		this.decisionType = decisionType;
 		this.x = x;
 		this.y = y;
+	}
+	
+	
+	@Override
+	public String toString() {
+		
+		return decisionType.toString();
 	}
 }

@@ -1,4 +1,4 @@
-package com.dbraillon.blitzball;
+package com.dbraillon.blitzball.models;
 
 public class Stadium {
 
