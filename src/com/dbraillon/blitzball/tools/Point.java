@@ -1,46 +1,31 @@
 package com.dbraillon.blitzball.tools;
 
-public class Point {
+public class Point extends com.dbraillon.dbgraphics.Point {
 
-	public static double distance(Point a, Point b) {
+	public static float distance(Point a, Point b) {
 		
-		return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
+		return (float) Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
 	}
 	
-	private double x, y;
 	
+	public Point(float x, float y) {
+		super(x, y);
+	}
+
 	public Point(double x, double y) {
-		
-		setX(x);
-		setY(y);
+		super((float)x, (float)y);
 	}
-	
+
+
 	public Point getOppositeAgainst(Point center) {
 		
-		double dx = Math.abs(center.getX() - x);
-		double dy = Math.abs(center.getY() - y);
+		float dx = Math.abs(center.getX() - getX());
+		float dy = Math.abs(center.getY() - getY());
 		
-		double fx = (center.getX() < x) ? center.getX() - dx : center.getX() + dx;
-		double fy = (center.getY() < y) ? center.getY() - dy : center.getY() + dy;
+		float fx = (center.getX() < getX()) ? center.getX() - dx : center.getX() + dx;
+		float fy = (center.getY() < getY()) ? center.getY() - dy : center.getY() + dy;
 		
 		
 		return new Point(fx, fy);
-	}
-	
-	// Getters and setters
-	public double getX() {
-		return x;
-	}
-	
-	public void setX(double x) {
-		this.x = x;
-	}
-	
-	public double getY() {
-		return y;
-	}
-	
-	public void setY(double y) {
-		this.y = y;
 	}
 }
