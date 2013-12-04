@@ -3,8 +3,8 @@ package com.dbraillon.blitzball;
 public abstract class Constants {
 
 	public static String windowsName = "Blitzball";
-	public static int windowsHeight = 600;
-	public static int windowsWidth = 800;
+	public static int windowsHeight = 768;
+	public static int windowsWidth = 1024;
 	public static int windowsFrameRate = 30;
 	
 	public static double velocityModifier = 10.0;

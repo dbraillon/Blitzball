@@ -17,8 +17,9 @@ public class Team {
 	
 	public Team(String tName, TeamPosition tPosition) {
 		
-		players = new Vector<SimpleEntry<PlayerPosition, Player>>();
-		set_tPosition(tPosition);
+		this.teamName = tName;
+		this.tPosition = tPosition;
+		this.players = new Vector<SimpleEntry<PlayerPosition, Player>>();
 	}
 	
 	public void makeBlueTeam() {
@@ -54,7 +55,7 @@ public class Team {
 		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.RF, rightShooter));
 		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.MF, middle));
 		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.LD, leftDefender));
-		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.LD, rightDefender));
+		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.RD, rightDefender));
 		players.add(new SimpleEntry<PlayerPosition, Player>(PlayerPosition.GL, goalkeeper));
 	}
 	
@@ -78,11 +79,11 @@ public class Team {
 	@Override
 	public String toString() {
 		
-		return get_TeamName();
+		return getName();
 	}
 
 
-	public String get_TeamName() {
+	public String getName() {
 		return teamName;
 	}
 

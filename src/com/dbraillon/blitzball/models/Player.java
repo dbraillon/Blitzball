@@ -302,20 +302,31 @@ public class Player {
 		switch(getPosition()) {
 		
 			case LF:
-				return getTeam().toString() + ": Left Front";
+				return "Left Front";
 			case RF:
-				return getTeam().toString() + ": Right Front";
+				return "Right Front";
 			case MF:
-				return getTeam().toString() + ": Middle Front";
+				return "Middle Front";
 			case LD:
-				return getTeam().toString() + ": Left Defender";
+				return "Left Defender";
 			case RD:
-				return getTeam().toString() + ": Right Defender";
+				return "Right Defender";
 			case GL:
-				return getTeam().toString() + ": Goal";
+				return "Goal";
 			default:
-				return getTeam().toString() + ": Nobody";	
+				return "Nobody";	
 		}
+	}
+	
+	public String toString(char output) {
+		
+		if(output == 's') {
+			
+			return String.format("%03d %02d %02d %02d %02d %02d %02d %02d", 
+								 hp, sp, en, at, pa, bl, sh, ca);
+		}
+		
+		return "";
 	}
 
 
