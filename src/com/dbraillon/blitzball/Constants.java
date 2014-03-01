@@ -7,7 +7,7 @@ public abstract class Constants {
 	public static int windowsWidth = 1024;
 	public static int windowsFrameRate = 30;
 	
-	public static double velocityModifier = 10.0;
+	public static float velocityModifier = 20.0f;
 	public static double distanceModifier = 20.0;
-	public static double nearDistance = 1.0;
+	public static double nearDistance = 2.0;
 }

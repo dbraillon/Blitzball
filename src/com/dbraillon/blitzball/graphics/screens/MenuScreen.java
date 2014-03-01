@@ -4,8 +4,8 @@ import java.util.concurrent.Callable;
 
 import org.newdawn.slick.Color;
 
-import com.dbraillon.blitzball.tools.Point;
 import com.dbraillon.dbgraphics.Depth;
+import com.dbraillon.dbgraphics.Point;
 import com.dbraillon.dbgraphics.Screen;
 import com.dbraillon.dbgraphics.componants.ButtonRenderItem;
 import com.dbraillon.dbgraphics.componants.StringRenderItem;
@@ -15,7 +15,7 @@ public class MenuScreen extends Screen {
 	public MenuScreen() {
 		super();
 		
-		addItem(new StringRenderItem(new Point(100, 100), "Blitzball"));
+		addItem(new StringRenderItem(new Point(100, 100), "dBlitzball"));
 		addItem(new ButtonRenderItem(new Point(100, 650), Depth.Middle, new Color(255, 255, 255), "Quick Match", new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {

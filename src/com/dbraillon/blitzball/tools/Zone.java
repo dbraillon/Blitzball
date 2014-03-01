@@ -1,11 +1,13 @@
 package com.dbraillon.blitzball.tools;
 
+import com.dbraillon.math.Point;
+
 public class Zone {
 
-	private double diameter;
-	private double radius;
+	private float diameter;
+	private float radius;
 	
-	public Zone(double radius) {
+	public Zone(float radius) {
 		
 		setDiameter(radius*2);
 		setRadius(radius);
@@ -14,18 +16,18 @@ public class Zone {
 	public boolean isInZone(Point center, Point point) {
 		
 		// distance AB
-		double d = Point.distance(center, point);
+		float d = Point.getDistance(center, point);
 		
 		return d <= radius;
 	}
 
 	
 	// Getters and setters
-	public double getRadius() {
+	public float getRadius() {
 		return radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(float radius) {
 		this.radius = radius;
 	}
 
@@ -33,7 +35,7 @@ public class Zone {
 		return diameter;
 	}
 
-	public void setDiameter(double diameter) {
+	public void setDiameter(float diameter) {
 		this.diameter = diameter;
 	}
 }

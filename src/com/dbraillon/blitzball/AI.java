@@ -6,7 +6,7 @@ import com.dbraillon.blitzball.enumerations.PlayerPosition;
 import com.dbraillon.blitzball.models.Player;
 import com.dbraillon.blitzball.models.Stadium;
 import com.dbraillon.blitzball.models.Team;
-import com.dbraillon.blitzball.tools.Point;
+import com.dbraillon.math.Point;
 
 public class AI {
 
@@ -15,7 +15,7 @@ public class AI {
 		mPlayer.getReflex().increase();
 		
 		Decision decision = makeADecision(mPlayer, bPlayer, mTeam, oTeam, stadium);
-		System.out.println(mPlayer.toString() + ":" + decision.toString());
+		System.out.println(mPlayer.toString('n') + ":" + decision.toString());
 		
 		if(decision.decisionType == DecisionType.CONTINUE) {
 			
@@ -75,7 +75,7 @@ public class AI {
 				// c'est moi !
 				
 				// ça vaut le coup que je tire ?
-				double d = Point.distance(oTeam.getPlayer(PlayerPosition.GL).getCurrentPosition(), mPlayer.getCurrentPosition());
+				float d = Point.getDistance(oTeam.getPlayer(PlayerPosition.GL).getCurrentPosition(), mPlayer.getCurrentPosition());
 				
 				System.out.println("" + d);
 				
@@ -105,9 +105,16 @@ public class AI {
 			}
 			else {
 				
-				return new Decision(DecisionType.MOVE, 
-									mPlayer.getOriginPosition().getX(), 
-									mPlayer.getOriginPosition().getY());
+				if(mPlayer.getCurrentPosition() == mPlayer.getOriginPosition()) {
+					
+					return new Decision(DecisionType.NOTHING);
+				}
+				else {
+				
+					return new Decision(DecisionType.MOVE, 
+							mPlayer.getOriginPosition().getX(), 
+							mPlayer.getOriginPosition().getY());
+				}
 			}
 		}
 		else {
@@ -119,9 +126,16 @@ public class AI {
 			}
 			else {
 				
-				return new Decision(DecisionType.MOVE, 
-						mPlayer.getOriginPosition().getX(), 
-						mPlayer.getOriginPosition().getY());
+				if(mPlayer.getCurrentPosition() == mPlayer.getOriginPosition()) {
+					
+					return new Decision(DecisionType.NOTHING);
+				}
+				else {
+				
+					return new Decision(DecisionType.MOVE, 
+							mPlayer.getOriginPosition().getX(), 
+							mPlayer.getOriginPosition().getY());
+				}
 			}
 		}
 	}

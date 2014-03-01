@@ -10,7 +10,7 @@ public class Stadium {
 	
 	public Stadium() {
 		
-		_radius = 600;
+		_radius = 700;
 		set_totalRadius(_radius + 2);
 	}
 

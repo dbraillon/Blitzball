@@ -6,7 +6,7 @@ public class Decision {
 
 	public DecisionType decisionType;
 	public Player player;
-	public double x, y;
+	public float x, y;
 	
 	public Decision(DecisionType decisionType) {
 		
@@ -17,9 +17,11 @@ public class Decision {
 		
 		this.decisionType = decisionType;
 		this.player = player;
+		this.x = player.getCurrentPosition().getX();
+		this.y = player.getCurrentPosition().getY();
 	}
 	
-	public Decision(DecisionType decisionType, double x, double y) {
+	public Decision(DecisionType decisionType, float x, float y) {
 		
 		this.decisionType = decisionType;
 		this.x = x;

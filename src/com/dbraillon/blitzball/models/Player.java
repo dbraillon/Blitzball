@@ -1,17 +1,17 @@
 package com.dbraillon.blitzball.models;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 
 import com.dbraillon.blitzball.Constants;
 import com.dbraillon.blitzball.enumerations.Decision;
 import com.dbraillon.blitzball.enumerations.DecisionType;
 import com.dbraillon.blitzball.enumerations.PlayerPosition;
-import com.dbraillon.blitzball.enumerations.TeamPosition;
-import com.dbraillon.blitzball.tools.Direction;
-import com.dbraillon.blitzball.tools.Point;
 import com.dbraillon.blitzball.tools.Reflex;
 import com.dbraillon.blitzball.tools.Zone;
+import com.dbraillon.math.Direction;
+import com.dbraillon.math.Point;
+import com.dbraillon.math.Vector;
 
 public class Player {
 
@@ -22,16 +22,15 @@ public class Player {
 	private Point currentPosition;
 	private Point destinationPosition;
 	
-	private Direction direction;
+	private Vector vectorDirection;
 	
-	private Zone playerZone;
-	private Zone caughtZone;
-	private Zone reflexZone;
-	private Zone followZone;
+	private Zone playerZone = new Zone(32);
+	private Zone caughtZone = new Zone(50);
+	private Zone reflexZone = new Zone(100);
+	private Zone followZone = new Zone(150);
 	
 	private Reflex reflex;
-	private Decision lastDecision;
-	
+	private Decision lastDecision = new Decision(DecisionType.NOTHING);
 	
 	public int hp; // health point
 	public int sp; // speed
@@ -42,27 +41,15 @@ public class Player {
 	public int sh; // shoot
 	public int ca; // catch
 	
-	private boolean directionLocked;
-	
 	
 	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca, int re,
 				  int xOriginPosition, int yOriginPosition, PlayerPosition pos, Team team) {
 		
-		setPosition(pos);
-		setTeam(team);
+		originPosition = new Point(xOriginPosition, yOriginPosition);
+		currentPosition = originPosition;
+		vectorDirection = new Vector(currentPosition, currentPosition);
 		
-		setOriginPosition(new Point(xOriginPosition, yOriginPosition));
-		setCurrentPosition(originPosition);
-		setDirection(new Direction(currentPosition, currentPosition));
-		
-		setPlayerZone(new Zone(5));
-		setCaughtZone(new Zone(50));
-		setReflexZone(new Zone(100));
-		setFollowZone(new Zone(150));
-		
-		setReflex(new Reflex(re));
-		setLastDecision(new Decision(DecisionType.NOTHING));
-		
+		reflex = new Reflex(re);
 		
 		this.hp = hp;
 		this.sp = sp;
@@ -72,8 +59,8 @@ public class Player {
 		this.bl = bl;
 		this.sh = sh;
 		this.ca = ca;
-		
-		directionLocked = false;
+		this.position = pos;
+		this.team = team;
 	}
 	
 	
@@ -82,8 +69,8 @@ public class Player {
 	 */
 	public void turnToDestination() {
 		
-		// calculate new direction
-		direction.update(currentPosition, destinationPosition);
+		// Set new vector direction
+		vectorDirection = new Vector(currentPosition, destinationPosition);
 	}
 
 	/**
@@ -105,23 +92,20 @@ public class Player {
 	 */
 	public void goForward() {
 		
+		// distance between his position and his destination
+		float distance = Point.getDistance(currentPosition, destinationPosition);
+		
 		// reduce the velocity
-		double velocity = sp / Constants.velocityModifier;
+		float velocity = sp / Constants.velocityModifier;
 		
-		// get the distance between the current position and the destination
-		double fdDistance = Point.distance(currentPosition, destinationPosition);
+		// get the % sp / distance
+		float percant = velocity / distance;
 		
-		// if the destination is close enough, move the current player on it
-		if(fdDistance < velocity) {
-			
-			setCurrentPosition(destinationPosition);
-		}
-		// otherwise move to it
-		else {
-			
-			Point newPosition = new Point(currentPosition.getX() + velocity * direction.getVector().getX(), currentPosition.getY() + velocity * direction.getVector().getY());
-			setCurrentPosition(newPosition);
-		}
+		if(percant >= 1)
+			currentPosition = destinationPosition;
+		else
+			currentPosition = new Point(currentPosition.getX() + vectorDirection.getxDistance() * percant, 
+										currentPosition.getY() + vectorDirection.getyDistance() * percant);
 	}
 	
 
@@ -130,12 +114,12 @@ public class Player {
 	 * @param tEnemy The enemy team that want to catch the current player
 	 * @return All enemy that caught the current player
 	 */
-	public Vector<Player> isCaught(Team tEnemy) {
+	public ArrayList<Player> isCaught(Team tEnemy) {
 
 		// enemy that caught current player
-		Vector<Player> cEnnemy = new Vector<Player>();
+		ArrayList<Player> cEnnemy = new ArrayList<Player>();
 		// enemy that is in reflex radius and will help if someone caught current player
-		Vector<Player> rEnnemy = new Vector<Player>(); 
+		ArrayList<Player> rEnnemy = new ArrayList<Player>(); 
 		
 		// iterate over the enemy team
 		for(int i = 0; i < Team.PLAYER_COUNT; i++) {
@@ -183,7 +167,7 @@ public class Player {
 	
 	public boolean isNear(Point point) {
 		
-		return Point.distance(currentPosition, point) < Constants.nearDistance;
+		return Point.getDistance(currentPosition, point) < Constants.nearDistance;
 	}
 	
 	
@@ -214,7 +198,7 @@ public class Player {
 	public boolean shoot(Player goalie) {
 		
 		// get the distance from the goal
-		double d = Point.distance(goalie.getCurrentPosition(), currentPosition);
+		double d = Point.getDistance(goalie.getCurrentPosition(), currentPosition);
 		
 		// reduce the distance
 		d = d / Constants.distanceModifier;
@@ -230,96 +214,34 @@ public class Player {
 		return sh > mCa;
 	}
 	
-	
-	// Positioning
-	
-	/**
-	 * Put the current player to his catch positioning
-	 * @param pBall The player that is caught
-	 * @param i The current player place
-	 * @return When the current place is in place
-	 */
-	public boolean catchPositioning(Player pBall, int i) {
-		
-		if(!directionLocked) {
-			
-			double pbx = pBall.getCurrentPosition().getX();
-			double pby = pBall.getCurrentPosition().getY();
-			
-			Point catchPosition = null;
-			
-			if(i == 0) catchPosition = new Point(pbx + pBall.getCaughtZone().getRadius(), pby);
-			else if(i == 1) catchPosition = new Point(pbx + pBall.getCaughtZone().getRadius() - 5, pby - 10);
-			else if(i == 2) catchPosition = new Point(pbx + pBall.getCaughtZone().getRadius() - 5, pby + 10);
-			else if(i == 3) catchPosition = new Point(pbx + pBall.getCaughtZone().getRadius() - 10, pby - 15);
-			else catchPosition = new Point(pbx + pBall.getCaughtZone().getRadius() - 10, pby + 15);
-			
-			// player ball belongs to right team so the current player needs to be to the left
-			if(pBall.getTeam().get_tPosition() == TeamPosition.RIGHT) {
-				
-				catchPosition = catchPosition.getOppositeAgainst(pBall.getCurrentPosition());
-			}
-			
-			turnToDestination(catchPosition);
-			directionLocked = true;
-		}
-		
-		goForward();
-		
-		if(isNear(destinationPosition)) {
-			
-			directionLocked = false;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	
-	public boolean attackAnim(Player pBall) {
-		
-		if(!directionLocked) {
-			
-			turnToDestination(currentPosition.getOppositeAgainst(pBall.getCurrentPosition()));
-			directionLocked = true;
-		}
-		
-		goForward();
-		
-		if(isNear(destinationPosition)) {
-			
-			directionLocked = false;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	
 	@Override
-	public String toString() {
-		
-		switch(getPosition()) {
-		
-			case LF:
-				return "Left Front";
-			case RF:
-				return "Right Front";
-			case MF:
-				return "Middle Front";
-			case LD:
-				return "Left Defender";
-			case RD:
-				return "Right Defender";
-			case GL:
-				return "Goal";
-			default:
-				return "Nobody";	
-		}
+	public String toString()
+	{
+		return toString('s');
 	}
 	
 	public String toString(char output) {
 		
+		if(output == 'n') {
+			
+			switch(getPosition()) {
+				
+				case LF:
+					return getTeam().getName() + ": Left Front";
+				case RF:
+					return getTeam().getName() + ": Right Front";
+				case MF:
+					return getTeam().getName() + ": Middle Front";
+				case LD:
+					return getTeam().getName() + ": Left Defender";
+				case RD:
+					return getTeam().getName() + ": Right Defender";
+				case GL:
+					return getTeam().getName() + ": Goal";
+				default:
+					return "Nobody";	
+			}
+		}
 		if(output == 's') {
 			
 			return String.format("%03d %02d %02d %02d %02d %02d %02d %02d", 
@@ -362,14 +284,8 @@ public class Player {
 
 
 	public Direction getDirection() {
-		return direction;
+		return vectorDirection.toDirection();
 	}
-
-
-	public void setDirection(Direction direction) {
-		this.direction = direction;
-	}
-
 
 	public Zone getPlayerZone() {
 		return playerZone;

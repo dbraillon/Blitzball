@@ -1,4 +1,4 @@
-package com.dbraillon.blitzball;
+/*package com.dbraillon.blitzball;
 
 import java.util.Vector;
 
@@ -25,7 +25,7 @@ public class GameOld extends BasicGame {
 	 * > screen height and width
 	 * > screen frame rate
 	 * > screen title
-	 */
+	 *
 	private static final int WIDTH = 800, HEIGHT = 600, FRAME_RATE = 5;
 	private static final String TITLE = "Blitzball";
 	
@@ -49,7 +49,7 @@ public class GameOld extends BasicGame {
 	 * Constructor
 	 * 
 	 * @param title Screen title
-	 */
+	 *
 	
 	public GameOld(String title) {
 		super(title);
@@ -62,7 +62,7 @@ public class GameOld extends BasicGame {
 	 * > init
 	 * > render
 	 * > update
-	 */
+	 *
 	AI ia;
 	@Override
 	public void init(GameContainer gContainer) throws SlickException {
@@ -73,12 +73,12 @@ public class GameOld extends BasicGame {
 		stadium = new Stadium();
 		
 		trace("Create red team at right side");
-		redTeam = new Team("Red team", TeamPosition.RIGHT);
-		redTeam.makeRedTeam();
+		redTeam = new Team("Red team");
+		redTeam.makeLeftTeam();
 		
 		trace("Create blue team at left side");
-		blueTeam = new Team("Blue team", TeamPosition.LEFT);
-		blueTeam.makeBlueTeam();
+		blueTeam = new Team("Blue team");
+		blueTeam.makeRightTeam();
 		
 		trace("Give the ball to the blue team middle front");
 		pBall = blueTeam.getPlayer(PlayerPosition.MF);
@@ -319,7 +319,7 @@ public class GameOld extends BasicGame {
 		 *     
 		 *     le joueur avance si il en a besoin
 		 * 
-		 */	
+		 *
 	}
 	
 	public State get_State() {
@@ -371,3 +371,4 @@ public class GameOld extends BasicGame {
 		System.out.println("- " + System.currentTimeMillis() + ": " + message);
 	}
 }
+*/
