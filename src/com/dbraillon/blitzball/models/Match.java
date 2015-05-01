@@ -7,7 +7,7 @@ import org.newdawn.slick.GameContainer;
 
 import com.dbraillon.blitzball.AI;
 import com.dbraillon.blitzball.enumerations.PlayerPosition;
-import com.dbraillon.blitzball.enumerations.State;
+import com.dbraillon.blitzball.enumerations.GameState;
 import com.dbraillon.blitzball.enumerations.TeamPosition;
 import com.dbraillon.blitzball.tools.Positioning;
 import com.dbraillon.dbgraphics.Depth;
@@ -18,6 +18,7 @@ public class Match extends Renderable {
 
 	private Stadium stadium;
 	private Team leftTeam, rightTeam;
+	private Ball ball;
 	
 	// Player that has the ball
 	private Player pBall;
@@ -28,7 +29,7 @@ public class Match extends Renderable {
 	private int pDefensiveStat;
 	
 	// The state of the game
-	private State gState;
+	private GameState gState;
 	
 	// used in positioning
 	private float xAttacker, yAttacker;
@@ -45,8 +46,9 @@ public class Match extends Renderable {
 		rightTeam.makeRightTeam();
 		
 		pBall = leftTeam.getPlayer(PlayerPosition.MF);
+		ball = new Ball(pBall);
 		
-		gState = State.NORMAL;
+		gState = GameState.NORMAL;
 	}
 	
 	@Override
@@ -74,7 +76,7 @@ public class Match extends Renderable {
 					}
 					else {
 						
-						gState = State.NORMAL;
+						gState = GameState.NORMAL;
 					}
 				}
 				else
@@ -91,8 +93,9 @@ public class Match extends Renderable {
 							pBall.getReflex().reset();
 							pBall = pCounter;
 							pBall.getReflex().increaseMax();
+							ball.setPlayer(pBall);
 							
-							gState = State.NORMAL;
+							gState = GameState.NORMAL;
 						}
 						else {
 							
@@ -120,7 +123,7 @@ public class Match extends Renderable {
 				
 				if(!inPosition.contains(Boolean.FALSE)) {
 					
-					gState = State.ATTACK; 
+					gState = GameState.ATTACK; 
 				}
 					
 				break;
@@ -140,7 +143,7 @@ public class Match extends Renderable {
 					
 					if((pCounters = pBall.isCaught(rightTeam)).size() > 0) {
 						
-						gState = State.CAUGHT;
+						gState = GameState.CAUGHT;
 						pDefensiveStat = pBall.en;
 					}
 				}
@@ -148,7 +151,7 @@ public class Match extends Renderable {
 					
 					if((pCounters = pBall.isCaught(leftTeam)).size() > 0) {
 						
-						gState = State.CAUGHT;
+						gState = GameState.CAUGHT;
 						pDefensiveStat = pBall.en;
 					}
 				}
@@ -182,11 +185,11 @@ public class Match extends Renderable {
 		this.pBall = pBall;
 	}
 
-	public State getgState() {
+	public GameState getgState() {
 		return gState;
 	}
 
-	public void setgState(State gState) {
+	public void setgState(GameState gState) {
 		this.gState = gState;
 	}
 
@@ -228,5 +231,13 @@ public class Match extends Renderable {
 
 	public void setpDefensiveStat(int pDefensiveStat) {
 		this.pDefensiveStat = pDefensiveStat;
+	}
+
+	public Ball getBall() {
+		return ball;
+	}
+
+	public void setBall(Ball ball) {
+		this.ball = ball;
 	}
 }

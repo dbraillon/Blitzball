@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.dbraillon.blitzball.Constants;
-import com.dbraillon.blitzball.enumerations.Decision;
 import com.dbraillon.blitzball.enumerations.DecisionType;
 import com.dbraillon.blitzball.enumerations.PlayerPosition;
+import com.dbraillon.blitzball.tools.Decision;
 import com.dbraillon.blitzball.tools.Reflex;
 import com.dbraillon.blitzball.tools.Zone;
 import com.dbraillon.math.Direction;
@@ -32,51 +32,31 @@ public class Player {
 	private Reflex reflex;
 	private Decision lastDecision = new Decision(DecisionType.NOTHING);
 	
-	public int hp; // health point
-	public int sp; // speed
-	public int en; // endurance
-	public int at; // attack
-	public int pa; // pass
-	public int bl; // block
-	public int sh; // shoot
-	public int ca; // catch
+	public int hp, sp, en, at, pa, bl, sh, ca;
 	
 	
 	public Player(int hp, int sp, int en, int at, int pa, int bl, int sh, int ca, int re,
 				  int xOriginPosition, int yOriginPosition, PlayerPosition pos, Team team) {
 		
-		originPosition = new Point(xOriginPosition, yOriginPosition);
-		currentPosition = originPosition;
-		vectorDirection = new Vector(currentPosition, currentPosition);
+		this.originPosition = new Point(xOriginPosition, yOriginPosition);
+		this.currentPosition = originPosition;
+		this.vectorDirection = new Vector(currentPosition, currentPosition);
 		
-		reflex = new Reflex(re);
+		this.reflex = new Reflex(re);
 		
-		this.hp = hp;
-		this.sp = sp;
-		this.en = en;
-		this.at = at;
-		this.pa = pa;
-		this.bl = bl;
-		this.sh = sh;
-		this.ca = ca;
+		this.hp = hp; this.sp = sp; this.en = en;
+		this.at = at; this.pa = pa; this.bl = bl;
+		this.sh = sh; this.ca = ca;
 		this.position = pos;
 		this.team = team;
 	}
 	
-	
-	/**
-	 * Turn the player to his current destination
-	 */
 	public void turnToDestination() {
 		
 		// Set new vector direction
 		vectorDirection = new Vector(currentPosition, destinationPosition);
 	}
 
-	/**
-	 * Turn the player to the specified destination
-	 * @param desinationPosition The new destination to follow
-	 */
 	public void turnToDestination(Point desinationPosition) {
 		
 		// set new destination
@@ -86,10 +66,6 @@ public class Player {
 		turnToDestination();
 	}
 	
-	
-	/**
-	 * Make a step to his current destination
-	 */
 	public void goForward() {
 		
 		// distance between his position and his destination
@@ -163,7 +139,6 @@ public class Player {
 		
 		return followZone.isInZone(currentPosition, p.getCurrentPosition());
 	}
-	
 	
 	public boolean isNear(Point point) {
 		

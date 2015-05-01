@@ -1,7 +1,7 @@
 package com.dbraillon.blitzball.models;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.dbraillon.blitzball.enumerations.PlayerPosition;
 import com.dbraillon.blitzball.enumerations.TeamPosition;
@@ -10,7 +10,7 @@ public class Team {
 
 	public static final int PLAYER_COUNT = 6;
 	
-	private Vector<SimpleEntry<PlayerPosition, Player>> players;
+	private ArrayList<SimpleEntry<PlayerPosition, Player>> players;
 	private String teamName;
 	private TeamPosition tPosition;
 	
@@ -18,12 +18,12 @@ public class Team {
 	public Team(String tName) {
 		
 		this.teamName = tName;
-		this.players = new Vector<SimpleEntry<PlayerPosition, Player>>();
+		this.players = new ArrayList<SimpleEntry<PlayerPosition, Player>>();
 	}
 	
 	public void makeLeftTeam() {
 		
-		teamName = "Blue team";
+		teamName = "Left team";
 		
 		Player leftShooter = new Player(132, 60, 10, 3, 3, 2, 10, 1, 5, 250, 150, PlayerPosition.LF, this);
 		Player rightShooter = new Player(150, 60, 11, 3, 3, 2, 13, 1, 5, 250, 550, PlayerPosition.RF, this);
@@ -44,7 +44,7 @@ public class Team {
 	
 	public void makeRightTeam() {
 		
-		teamName = "Red team";
+		teamName = "Right team";
 		
 		Player leftShooter = new Player(329, 60, 16, 5, 5, 4, 10, 1, 5, 450, 150, PlayerPosition.LF, this);
 		Player rightShooter = new Player(274, 60, 17, 5, 3, 2, 9, 1, 5, 450, 550, PlayerPosition.RF, this);

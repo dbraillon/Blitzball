@@ -1,5 +1,6 @@
-package com.dbraillon.blitzball.enumerations;
+package com.dbraillon.blitzball.tools;
 
+import com.dbraillon.blitzball.enumerations.DecisionType;
 import com.dbraillon.blitzball.models.Player;
 
 public class Decision {

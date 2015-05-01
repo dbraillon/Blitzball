@@ -1,11 +1,11 @@
 package com.dbraillon.blitzball;
 
-import com.dbraillon.blitzball.enumerations.Decision;
 import com.dbraillon.blitzball.enumerations.DecisionType;
 import com.dbraillon.blitzball.enumerations.PlayerPosition;
 import com.dbraillon.blitzball.models.Player;
 import com.dbraillon.blitzball.models.Stadium;
 import com.dbraillon.blitzball.models.Team;
+import com.dbraillon.blitzball.tools.Decision;
 import com.dbraillon.math.Point;
 
 public class AI {

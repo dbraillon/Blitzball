@@ -6,7 +6,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
-import com.dbraillon.blitzball.enumerations.State;
+import com.dbraillon.blitzball.enumerations.GameState;
 import com.dbraillon.blitzball.graphics.components.InfoPanel;
 import com.dbraillon.blitzball.models.Match;
 import com.dbraillon.blitzball.models.Player;
@@ -20,12 +20,13 @@ public class MatchScreen extends Screen {
 	
 	private Match match;
 	private InfoPanel infoPanel;
-	private Animation animation;
 	
-	
+	private Animation leftAnimation;
+	private Animation rightAnimation;
+	private Animation ballAnimation;
 	
 	// Info in the match
-	private State previousState = State.NORMAL;
+	private GameState previousState = GameState.NORMAL;
 	private int previousDefensiveStat = 0;
 	private Player previousAttacker;
 	
@@ -35,9 +36,14 @@ public class MatchScreen extends Screen {
 		match = new Match(new Point(207, 120));
 		infoPanel = new InfoPanel(new Point(6, 34), Depth.Middle, null, 700, 300);
 		try {
-			SpriteSheet ss = new SpriteSheet("assets/characters/redheadboy.png", 32, 32);
-			animation = new Animation(ss, 0, 0, 2, 0, true, 400, true);
-			animation.setPingPong(true);
+			SpriteSheet ss = new SpriteSheet("assets/characters/brownhairgirl.png", 32, 32);
+			SpriteSheet ss2 = new SpriteSheet("assets/characters/redheadboy.png", 32, 32);
+			SpriteSheet ballSpriteSheet = new SpriteSheet("assets/blitzball.png", 32, 32);
+			leftAnimation = new Animation(ss, 0, 0, 2, 0, true, 400, true);
+			leftAnimation.setPingPong(true);
+			rightAnimation = new Animation(ss2, 0, 0, 2, 0, true, 400, true);
+			rightAnimation.setPingPong(true);
+			ballAnimation = new Animation(ballSpriteSheet, 0, 0, 3, 0, true, 400, true);
 		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,9 +75,9 @@ public class MatchScreen extends Screen {
 			infoPanel.setpCounterStatsValueString(match.getpCounter().toString('s'));
 		}
 		
-		if(previousState == State.NORMAL && match.getgState() == State.CAUGHT)
+		if(previousState == GameState.NORMAL && match.getgState() == GameState.CAUGHT)
 			infoPanel.addLine(match.getpBall().toString('n') + " has been caught!");
-		if(previousState == State.CAUGHT && match.getgState() == State.ATTACK)
+		if(previousState == GameState.CAUGHT && match.getgState() == GameState.ATTACK)
 			infoPanel.addLine(match.getpBall().toString('n') + " has " + match.getpBall().en + " EN.");
 		if(previousDefensiveStat != match.getpDefensiveStat() && previousAttacker != null) {
 			infoPanel.addLine(previousAttacker.toString('n') + " hit for " + (previousDefensiveStat - match.getpDefensiveStat()) + "!");
@@ -102,17 +108,24 @@ public class MatchScreen extends Screen {
 			
 			// draw the red player
 			gameContainer.getGraphics().drawAnimation(
-					animation, 
+					leftAnimation, 
 					318 + pRed.getCurrentPosition().getX(), 
 					34 + pRed.getCurrentPosition().getY());
+			
+			gameContainer.getGraphics().drawAnimation(
+					rightAnimation, 
+					318 + pBlue.getCurrentPosition().getX(), 
+					34 + pBlue.getCurrentPosition().getY());
+			
+			gameContainer.getGraphics().drawAnimation(ballAnimation, 318 + match.getBall().getPosition().getX(), 34 + match.getBall().getPosition().getY());
 			/*gameContainer.getGraphics().setColor(new Color(255, 122, 122));
 			gameContainer.getGraphics().drawRect(318 + pRed.getCurrentPosition().getX() - (float)pRed.getPlayerZone().getRadius() / 2, 34 + pRed.getCurrentPosition().getY() - (float)pRed.getPlayerZone().getRadius() / 2, 
 					(float)pRed.getPlayerZone().getRadius(), (float)pRed.getPlayerZone().getRadius());*/
 			
 			// draw the blue player
-			gameContainer.getGraphics().setColor(new Color(122, 122, 255));
+			/*gameContainer.getGraphics().setColor(new Color(122, 122, 255));
 			gameContainer.getGraphics().drawRect(318 + pBlue.getCurrentPosition().getX(), 34 + pBlue.getCurrentPosition().getY(), 
-					(float)pBlue.getPlayerZone().getRadius(), (float)pBlue.getPlayerZone().getRadius());
+					(float)pBlue.getPlayerZone().getRadius(), (float)pBlue.getPlayerZone().getRadius());*/
 		}
 	}
 }

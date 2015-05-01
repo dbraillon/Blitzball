@@ -1,6 +1,6 @@
 package com.dbraillon.blitzball.enumerations;
 
-public enum State {
+public enum GameState {
 
 	NORMAL, PASS, SHOOT, CAUGHT, ATTACK;
 }
